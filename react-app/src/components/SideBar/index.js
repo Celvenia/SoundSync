@@ -6,8 +6,7 @@ import { NavLink } from "react-router-dom/cjs/react-router-dom";
 import Dropdown from "../Dropdown";
 
 import "./SideBar.css";
-// import SideTop from "../SideTop";
-// import SideBottom from "../SideBottom";
+
 
 export default function SideBar({ data }) {
   const logo =
