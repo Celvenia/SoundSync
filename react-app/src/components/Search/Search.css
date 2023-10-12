@@ -1,0 +1,60 @@
+/* Search container */
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #181818; /* Spotify's background color */
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Search icon */
+.search-icon {
+  color: #1db954; /* Spotify's accent color */
+  margin-right: 10px;
+}
+
+/* Search input */
+.search-input {
+  flex-grow: 1;
+  border: none;
+  background-color: transparent;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+/* Search button */
+.search-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Search results container */
+.search-artist-result {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 20px;
+}
+
+/* Search result items */
+.search-artist-result li {
+  margin-bottom: 10px;
+}
+
+/* Search result links */
+.search-artist-link {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  transition: color 0.3s;
+}
+
+/* Add a hover effect to result links */
+.search-artist-link:hover {
+  color: #1db954; /* Spotify's accent color on hover */
+}
