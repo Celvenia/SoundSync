@@ -9,9 +9,10 @@ from spotipy.oauth2 import SpotifyOAuth
 
 CLIENT_ID = os.environ.get('CLIENT_ID')
 CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
 REDIRECT_URI = 'http://localhost:3000'
 
-sp_oauth = SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI,
+sp_oauth = SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPOTIPY_CLIENT_ID,
                         scope='user-read-private user-read-email', cache_path='.cache')
 
 auth_routes = Blueprint('auth', __name__)
@@ -127,5 +128,5 @@ def refresh_token():
         token_info = spotify_api.refresh_access_token(refresh_token)
         access_token = token_info['access_token']
         return jsonify(token_info)
-    except Exception as e: 
+    except Exception as e:
         return 'Failed to refresh access token', 400
