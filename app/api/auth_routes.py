@@ -1,8 +1,18 @@
-from flask import Blueprint, jsonify, session, request
+from flask import Blueprint, jsonify, session, request, redirect, url_for
 from app.models import User, db
 from app.forms import LoginForm
 from app.forms import SignUpForm
 from flask_login import current_user, login_user, logout_user, login_required
+import os
+
+from spotipy.oauth2 import SpotifyOAuth
+
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+REDIRECT_URI = 'http://localhost:3000'
+
+sp_oauth = SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI,
+                        scope='user-read-private user-read-email', cache_path='.cache')
 
 auth_routes = Blueprint('auth', __name__)
 
@@ -80,3 +90,42 @@ def unauthorized():
     Returns unauthorized JSON when flask-login authentication fails
     """
     return {'errors': ['Unauthorized']}, 401
+
+
+@auth_routes.route('/login_spotify', methods=['POST'])
+def login_spotify():
+    code = request.json.get('code')
+
+    # Get access token and other info from Spotify
+    token_info = sp_oauth.get_access_token(code)
+
+    if token_info:
+        response_data = {
+            'accessToken': token_info['access_token'],
+            'refreshToken': token_info['refresh_token'],
+            'expiresIn': token_info['expires_in']
+        }
+        # return jsonify(response_data)
+        return jsonify(token_info)
+    return '', 400
+
+
+@auth_routes.route('/refresh', methods=['POST'])
+def refresh_token():
+    data = request.json
+    refresh_token = data.get('refresh_token')
+
+    if not refresh_token:
+        return 'Refresh token is missing', 400
+
+    spotify_api = sp_oauth
+
+    # Set the refresh token
+    spotify_api._refresh_token = refresh_token
+
+    try:
+        token_info = spotify_api.refresh_access_token(refresh_token)
+        access_token = token_info['access_token']
+        return jsonify(token_info)
+    except Exception as e: 
+        return 'Failed to refresh access token', 400

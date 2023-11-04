@@ -1,0 +1,55 @@
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 8px;
+  border-radius: 4px;
+  width: 300px;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+}
+
+.search-bar button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #333;
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.card-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.musicPlayer {
+  background: #000000;
+  text-align: center;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+input[type="text"]::-webkit-input-placeholder {
+  color: #888;
+}
+input[type="text"]:-ms-input-placeholder {
+  color: #888;
+}
+input[type="text"]::placeholder {
+  color: #888;
+}

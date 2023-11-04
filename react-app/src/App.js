@@ -17,6 +17,8 @@ import SideBar from "./components/SideBar";
 // import Search from "./components/Search";
 import Card from "./components/Card";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import LoginFormModal from "./components/LoginFormModal";
+import Dashboard from "./components/Dashboard";
 
 // const getTokenFromUrl = () => {
 //   return window.location.search
@@ -31,14 +33,13 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 // const spotifyApi = new SpotifyWebApi();
 
+const code = new URLSearchParams(window.location.search).get("code");
+
 function App() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [isLoaded, setIsLoaded] = useState(false);
   const sessionUser = useSelector((state) => state.session.user);
-  // const songsObj = useSelector((state) => state.songReducer);
-  // const playlistsObj = useSelector((state) => state.playlistReducer);
-  // const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
 
   const [spotifyToken, setSpotifyToken] = useState("");
   const [nowPlaying, setNowPlaying] = useState({});
@@ -102,35 +103,18 @@ function App() {
                 <Route path="/signup">
                   <SignupFormPage />
                 </Route>
-                <Route path="/search">{/* <Search /> */}</Route>
+                <Route path="/search">
+                  {code ? <Dashboard code={code} /> : <LoginFormModal />}
+                </Route>
                 <Route path="/">
-                  <div>
-                    <h2>Spotify Playlists</h2>
-                    <div className="content">
-                      <Card />
-                      <Card />
-                      <Card />
-                      <Card />
-                      <Card />
-                      <Card />
-                      <Card />
-                      <Card />
-                      <Card />
-                      <Card />
-                    </div>
-                  </div>
-
-                  {/* <MainContentPlaylist /> */}
-                  {/* {sessionUser && ( */}
-                  <></>
-                  {/* )} */}
+                  {code ? <Dashboard code={code} /> : <LoginFormModal />}
                 </Route>
               </Switch>
             )}
           </div>
         </div>
       </div>
-      <div className="musicPlayer">{/* <MusicPlayer songs={songs} /> */}</div>
+
     </div>
   );
 }
