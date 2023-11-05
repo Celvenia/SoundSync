@@ -12,4 +12,5 @@ class Config:
         'DATABASE_URL').replace('postgres://', 'postgresql://')
     SQLALCHEMY_ECHO = True
     CLIENT_ID = os.environ.get('CLIENT_ID')
+    CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
     CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
