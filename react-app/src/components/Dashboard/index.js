@@ -70,7 +70,12 @@ export default function Dashboard({ code }) {
         ))}
       </div>
       <div className="musicPlayer">
-        {accessToken && <MusicPlayer accessToken={accessToken} trackUri={""} />}
+        {accessToken && (
+          <MusicPlayer
+            accessToken={accessToken}
+            trackUri={searchResults[0]?.uri}
+          />
+        )}
       </div>
     </div>
   );
