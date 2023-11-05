@@ -1,15 +1,21 @@
 import React from "react";
-// import SpotifyPlayer from "react-spotify-web-playback";
+import SpotifyPlayer from "react-spotify-web-playback";
 
-export default function MusicPlayer({ accessToken, trackUri }) {
-  console.log(trackUri);
+const MusicPlayer = ({ accessToken, trackUri }) => {
   if (!accessToken) return null;
+
   return (
-    <></>
-    // <SpotifyPlayer
-    //   token={accessToken}
-    //   showSaveIcon
-    //   uris={trackUri ? [trackUri] : []}
-    // />
+    <SpotifyPlayer
+      token={accessToken}
+      uris={trackUri ? [trackUri] : []}
+      play={true}
+      persistDeviceSelection={true}
+      callback={(state) => {
+        if (!state.isPlaying) {
+        }
+      }}
+    />
   );
-}
+};
+
+export default MusicPlayer;
