@@ -15,6 +15,7 @@ export default function Dashboard({ code }) {
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [playingTrack, setPlayingTrack] = useState([]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -71,10 +72,7 @@ export default function Dashboard({ code }) {
       </div>
       <div className="musicPlayer">
         {accessToken && (
-          <MusicPlayer
-            accessToken={accessToken}
-            trackUri={searchResults[0]?.uri}
-          />
+          <MusicPlayer accessToken={accessToken} trackUri={searchResults} />
         )}
       </div>
     </div>
