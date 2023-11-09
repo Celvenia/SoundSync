@@ -20,19 +20,6 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import LoginFormModal from "./components/LoginFormModal";
 import Dashboard from "./components/Dashboard";
 
-// const getTokenFromUrl = () => {
-//   return window.location.search
-//     .substring(1)
-//     .split("&")
-//     .reduce((initial, item) => {
-//       let parts = item.split("=");
-//       initial[parts[0]] = decodeURIComponent(parts[1]);
-//       return initial;
-//     }, {});
-// };
-
-// const spotifyApi = new SpotifyWebApi();
-
 const code = new URLSearchParams(window.location.search).get("code");
 
 function App() {
@@ -53,40 +40,11 @@ function App() {
     { name: "C", value: 3 },
   ];
 
-  // useEffect(() => {
-  //   let { code, state } = getTokenFromUrl();
-
-  // console.log("spotify code", code, "state", state);
-
-  // if (code) {
-  //   setSpotifyToken(`${code}`);
-
-  //   setLoggedIn(true);
-  // history.push("/");
-  //     dispatch(fetchAccessToken());
-  //   }
-  // }, [dispatch]);
-
-  // useEffect(() => {
-  //   if (spotifyToken) {
-  //     spotifyApi.setAccessToken(spotifyToken);
-  //   }
-  // }, [spotifyToken]);
 
   useEffect(() => {
     dispatch(authenticate()).then(() => setIsLoaded(true));
-    // dispatch(getSongs());
-    // dispatch(getPlaylists());
   }, [dispatch]);
 
-  // const getNowPlaying = () => {
-  //   spotifyApi.getMyCurrentPlaybackState().then((response) => {
-  //     setNowPlaying({
-  //       name: response.item.name,
-  //       albumArt: response.item.album.images[0].url,
-  //     });
-  //   });
-  // };
 
   return (
     <div className="outerWrap">

@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlay } from "@fortawesome/free-solid-svg-icons";
 import "./Card.css";
 
-export default function Card({ data }) {
+export default function Card({ data, chooseTrack }) {
   const { albumUrl, artist, title, uri } = data;
 
   const handlePlay = () => {
-    
+    chooseTrack(data);
   };
 
   return (

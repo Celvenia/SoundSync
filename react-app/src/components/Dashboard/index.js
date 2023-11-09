@@ -14,8 +14,20 @@ export default function Dashboard({ code }) {
   const token = UseAuth(code);
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
   const [search, setSearch] = useState("");
+  const [lyrics, setLyrics] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState([]);
+
+  const chooseTrack = (track) => {
+    setPlayingTrack(track);
+    setSearch("");
+    setLyrics("");
+  };
+
+  useEffect(() => {
+    if (!playingTrack) return;
+    
+  }, [playingTrack]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -52,8 +64,6 @@ export default function Dashboard({ code }) {
     return () => (cancel = true);
   }, [search, accessToken]);
 
-  console.log(searchResults);
-
   return (
     <div>
       <div className="search-bar">
@@ -67,12 +77,13 @@ export default function Dashboard({ code }) {
       </div>
       <div className="card-wrap">
         {searchResults.map((result) => (
-          <Card data={result} key={result.uri} />
+          <Card data={result} key={result.uri} chooseTrack={chooseTrack} />
         ))}
+        {searchResults.length === 0 && <div>{lyrics}</div>}
       </div>
       <div className="musicPlayer">
         {accessToken && (
-          <MusicPlayer accessToken={accessToken} trackUri={searchResults} />
+          <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} />
         )}
       </div>
     </div>
