@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import UseAuth from "../UseAuth";
 import "./Dashboard.css";
 import SpotifyWebApi from "spotify-web-api-node";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Card from "../Card";
 import MusicPlayer from "../MusicPlayer";
+import { getLyrics } from "../../store/lyrics";
+import { getUserInfo } from "../../store/spotify";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -13,10 +15,12 @@ const spotifyApi = new SpotifyWebApi({
 export default function Dashboard({ code }) {
   const token = UseAuth(code);
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+  const lyricsObj = useSelector((state) => state.lyricsReducer);
   const [search, setSearch] = useState("");
   const [lyrics, setLyrics] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState([]);
+  const dispatch = useDispatch();
 
   const chooseTrack = (track) => {
     setPlayingTrack(track);
@@ -25,8 +29,13 @@ export default function Dashboard({ code }) {
   };
 
   useEffect(() => {
+    if (!lyricsObj.lyrics) return;
+    setLyrics(lyricsObj.lyrics);
+    return () => {};
+  }, [lyrics]);
+
+  useEffect(() => {
     if (!playingTrack) return;
-    
   }, [playingTrack]);
 
   useEffect(() => {
@@ -64,6 +73,12 @@ export default function Dashboard({ code }) {
     return () => (cancel = true);
   }, [search, accessToken]);
 
+  useEffect(() => {
+    if (!lyricsObj.lyrics) return;
+    setLyrics(lyricsObj.lyrics);
+    return;
+  }, [lyricsObj.lyrics]);
+
   return (
     <div>
       <div className="search-bar">
@@ -79,8 +94,15 @@ export default function Dashboard({ code }) {
         {searchResults.map((result) => (
           <Card data={result} key={result.uri} chooseTrack={chooseTrack} />
         ))}
-        {searchResults.length === 0 && <div>{lyrics}</div>}
       </div>
+      {/* {playingTrack.length !== 0 && (
+        <button
+          onClick={() => getSongLyrics(playingTrack.artist, playingTrack.title)}
+        >
+          {`Lyrics for ${playingTrack.artist}: ${playingTrack.title}`}
+        </button>
+      )} */}
+      {lyrics && <div> {lyrics} </div>}
       <div className="musicPlayer">
         {accessToken && (
           <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} />

@@ -30,7 +30,7 @@ function LoginFormModal() {
       <a className="login-btn" href={AUTH_URL}>
         Login With Spotify
       </a>
-
+      {/* 
       <form onSubmit={handleSubmit}>
         <ul>
           {errors.map((error, idx) => (
@@ -56,7 +56,7 @@ function LoginFormModal() {
           />
         </label>
         <button type="submit">Log In</button>
-      </form>
+      </form> */}
     </>
   );
 }
