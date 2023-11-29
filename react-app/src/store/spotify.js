@@ -3,6 +3,8 @@ export const SPOTIFY_LOGIN_SUCCESS = "auth/SPOTIFY_LOGIN_SUCCESS";
 export const SPOTIFY_LOGIN_FAILURE = "auth/SPOTIFY_LOGIN_FAILURE";
 export const SPOTIFY_REFRESH_SUCCESS = "auth/SPOTIFY_REFRESH_SUCCESS";
 export const SPOTIFY_REFRESH_FAILURE = "auth/SPOTIFY_REFRESH_FAILURE";
+export const SPOTIFY_USER_SUCCESS = "auth/SPOTIFY_USER_SUCCESS";
+export const SPOTIFY_USER_FAILURE = "auth/SPOTIFY_USER_FAILURE";
 
 // authActions.js
 export const spotifyLoginSuccess = (data) => ({
@@ -22,6 +24,16 @@ export const spotifyRefreshSuccess = (data) => ({
 
 export const spotifyRefreshFailure = (error) => ({
   type: SPOTIFY_REFRESH_FAILURE,
+  error,
+});
+
+export const spotifyUserSuccess = (data) => ({
+  type: SPOTIFY_USER_SUCCESS,
+  data,
+});
+
+export const spotifyUserFailure = (error) => ({
+  type: SPOTIFY_USER_FAILURE,
   error,
 });
 
@@ -75,6 +87,31 @@ export const refreshSpotifyToken = (refreshToken) => {
   };
 };
 
+export const getUserInfo = (accessToken) => {
+  return async (dispatch) => {
+    try {
+      const response = await fetch("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const userInfo = await response.json();
+        console.log(userInfo);
+        let data = dispatch(spotifyUserSuccess(userInfo));
+        return data;
+      } else {
+        const errorData = await response.json();
+        let data = dispatch(spotifyUserFailure(errorData));
+        return data;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
 // authReducer.js
 const initialState = {
   accessToken: null,
@@ -113,6 +150,14 @@ const spotifyReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.error,
+      };
+    case SPOTIFY_USER_SUCCESS:
+      return {
+        ...state,
+      };
+    case SPOTIFY_USER_FAILURE:
+      return {
+        ...state,
       };
     default:
       return state;
