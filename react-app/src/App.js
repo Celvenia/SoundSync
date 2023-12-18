@@ -6,7 +6,7 @@ import LoginFormPage from "./components/LoginFormPage";
 import { authenticate } from "./store/session";
 import Navigation from "./components/Navigation";
 import HomePage from "./components/HomePage";
-// import MusicPlayer from "./components/MusicPlayer";
+import MusicPlayer from "./components/MusicPlayer";
 import SideBar from "./components/SideBar";
 // import SearchPage from "./components/SearchPage";
 // import { getSongs } from "./store/songs";
@@ -19,6 +19,8 @@ import Card from "./components/Card";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import LoginFormModal from "./components/LoginFormModal";
 import Dashboard from "./components/Dashboard";
+import Profile from "./components/Profile";
+import { MusicProvider } from "./context/MusicContext";
 
 const code = new URLSearchParams(window.location.search).get("code");
 
@@ -27,6 +29,7 @@ function App() {
   const history = useHistory();
   const [isLoaded, setIsLoaded] = useState(false);
   const sessionUser = useSelector((state) => state.session.user);
+  const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
 
   const [spotifyToken, setSpotifyToken] = useState("");
   const [nowPlaying, setNowPlaying] = useState({});
@@ -40,40 +43,38 @@ function App() {
     { name: "C", value: 3 },
   ];
 
-
   useEffect(() => {
     dispatch(authenticate()).then(() => setIsLoaded(true));
-  }, [dispatch]);
-
+    if (!accessToken) return;
+  }, [dispatch, accessToken]);
 
   return (
-    <div className="outerWrap">
-      <div className="App">
-        <SideBar data={data} />
-        <div className="main">
-          <Navigation isLoaded={isLoaded} />
-          <div className="mainContent">
-            {isLoaded && (
-              <Switch>
-                {/* <Route path="/login">
-                  <LoginFormPage />
-                </Route>
-                <Route path="/signup">
-                  <SignupFormPage />
-                </Route> */}
-                <Route path="/search">
-                  {code ? <Dashboard code={code} /> : <LoginFormModal />}
-                </Route>
-                <Route path="/">
-                  {code ? <Dashboard code={code} /> : <LoginFormModal />}
-                </Route>
-              </Switch>
-            )}
+    <MusicProvider>
+      <div className="outerWrap">
+        <div className="App">
+          <SideBar data={data} />
+          <div className="main">
+            {/* <Navigation isLoaded={isLoaded} /> */}
+            <Profile />
+            <div className="mainContent">
+              {isLoaded && (
+                <Switch>
+                  <Route path="/search">
+                    {code ? <Dashboard code={code} /> : <LoginFormModal />}
+                  </Route>
+                  <Route path="/">
+                    {code ? <Dashboard code={code} /> : <LoginFormModal />}
+                  </Route>
+                </Switch>
+              )}
+            </div>
           </div>
         </div>
       </div>
-
-    </div>
+      {/* <div className="musicPlayer">
+        {accessToken && <MusicPlayer accessToken={accessToken} />}
+      </div> */}
+    </MusicProvider>
   );
 }
 

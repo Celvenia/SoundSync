@@ -36,6 +36,8 @@ export default function MusicPlayer({ accessToken, trackUri }) {
     setPlay(true);
   }, [trackUri]);
 
+  console.log(trackUri);
+
   if (!accessToken) return;
 
   return (

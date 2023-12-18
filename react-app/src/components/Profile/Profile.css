@@ -1,0 +1,23 @@
+.profile-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+}
+
+.profile-button {
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+}

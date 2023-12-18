@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import UseAuth from "../UseAuth";
-import "./Dashboard.css";
-import SpotifyWebApi from "spotify-web-api-node";
 import { useDispatch, useSelector } from "react-redux";
+import SpotifyWebApi from "spotify-web-api-node";
 import Card from "../Card";
 import MusicPlayer from "../MusicPlayer";
-import { getLyrics } from "../../store/lyrics";
+import UseAuth from "../UseAuth";
 import { getUserInfo } from "../../store/spotify";
+import Playlists from "../Playlists";
+import "./Dashboard.css";
+import { useMusic } from "../../context/MusicContext";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -21,6 +22,7 @@ export default function Dashboard({ code }) {
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState([]);
   const dispatch = useDispatch();
+  const { setTrackUri } = useMusic();
 
   const chooseTrack = (track) => {
     setPlayingTrack(track);
@@ -41,6 +43,8 @@ export default function Dashboard({ code }) {
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
+    let userInfo = dispatch(getUserInfo(accessToken));
+    console.log(userInfo);
   }, [accessToken]);
 
   useEffect(() => {
@@ -95,13 +99,6 @@ export default function Dashboard({ code }) {
           <Card data={result} key={result.uri} chooseTrack={chooseTrack} />
         ))}
       </div>
-      {/* {playingTrack.length !== 0 && (
-        <button
-          onClick={() => getSongLyrics(playingTrack.artist, playingTrack.title)}
-        >
-          {`Lyrics for ${playingTrack.artist}: ${playingTrack.title}`}
-        </button>
-      )} */}
       {lyrics && <div> {lyrics} </div>}
       <div className="musicPlayer">
         {accessToken && (

@@ -15,7 +15,7 @@ html {
   background: #000000;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
   box-sizing: border-box;
 }
 
@@ -52,8 +52,6 @@ a {
   background: #121212;
   display: flex;
 }
-
-
 
 .main {
   width: 100%;
@@ -94,4 +92,19 @@ a {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+.musicPlayer {
+  background: #000000;
+  text-align: center;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
