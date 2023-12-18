@@ -20,7 +20,7 @@ export const getLyrics = (artist, song) => {
       );
 
       if (response.ok) {
-        const { lyrics } = await response.json(); // Extract lyrics property
+        const { lyrics } = await response.json();
         dispatch(getLyricsSuccess(lyrics));
         return lyrics;
       } else {
@@ -51,6 +51,7 @@ const lyricsReducer = (state = initialState, action) => {
     case GET_LYRICS_FAILURE:
       return {
         ...state,
+        lyrics: "Failed to obtain lyrics, Please try again",
         error: action.error,
       };
     default:

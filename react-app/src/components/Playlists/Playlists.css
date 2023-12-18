@@ -1,0 +1,19 @@
+.playlistCard {
+  list-style: none;
+  background: #121212;
+  margin: 2%;
+  padding: 10px;
+  border-radius: 10px;
+  color: #b3b3b3;
+  display: flex;
+  justify-content: space-between;
+}
+
+.playlistCard li {
+  margin: 10px;
+}
+
+.playlistCard li:hover {
+  color: #fff;
+  cursor: pointer;
+}

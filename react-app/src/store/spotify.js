@@ -98,7 +98,6 @@ export const getUserInfo = (accessToken) => {
 
       if (response.ok) {
         const userInfo = await response.json();
-        console.log(userInfo);
         let data = dispatch(spotifyUserSuccess(userInfo));
         return data;
       } else {
@@ -112,8 +111,37 @@ export const getUserInfo = (accessToken) => {
   };
 };
 
+// export const createPlaylist = (data) => {
+//   return async (dispatch) => {
+//     try {
+//       const response = await fetch("/api/auth/login_spotify", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(data),
+//       });
+
+//       if (response.ok) {
+//         const responseData = await response.json();
+//         let data = dispatch(spotifyLoginSuccess(responseData));
+//         return data;
+//       } else {
+//         const errorData = await response.json();
+//         let data = dispatch(spotifyLoginFailure(errorData));
+//         return data;
+//       }
+//     } catch (error) {
+//       dispatch(spotifyLoginFailure(error));
+//     }
+//   };
+// };
+
 // authReducer.js
 const initialState = {
+  displayName: null,
+  id: null,
+  email: null,
   accessToken: null,
   refreshToken: null,
   expiresIn: null,
@@ -154,6 +182,9 @@ const spotifyReducer = (state = initialState, action) => {
     case SPOTIFY_USER_SUCCESS:
       return {
         ...state,
+        displayName: action.data.display_name,
+        id: action.data.id,
+        email: action.data.email,
       };
     case SPOTIFY_USER_FAILURE:
       return {
