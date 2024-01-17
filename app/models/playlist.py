@@ -13,7 +13,6 @@ class Playlist(db.Model, UserMixin):
     creator_id = db.Column(db.Integer, db.ForeignKey(
         add_prefix_for_prod('users.id')), nullable=False)
     title = db.Column(db.String(255))
-    href = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(
         db.DateTime, default=datetime.now, onupdate=datetime.now)
@@ -24,7 +23,6 @@ class Playlist(db.Model, UserMixin):
             'id': self.id,
             'creator_id': self.creator_id,
             'title': self.title,
-            'href': self.href,
             'items': [item.to_dict() for item in self.items],
             'created_at': self.created_at,
             'updated_at': self.updated_at

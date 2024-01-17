@@ -1,70 +1,128 @@
-from flask import Blueprint, jsonify, session, request
-from app.models import User, Playlist, db
-from app.forms import LoginForm
-from app.forms import SignUpForm
-from flask_login import current_user, login_user, logout_user, login_required
-import os
-import time
-import base64
-import io
-
+from flask import Blueprint, jsonify, request
+from app.models import Playlist, PlaylistItem, db
+from flask_login import current_user, login_required
+from datetime import datetime
 
 playlist_routes = Blueprint('playlists', __name__)
 
 
-@playlist_routes.route('')
+@playlist_routes.route('', methods=['GET'])
 # @login_required
 def get_playlists():
     """
     Query for all playlists and returns them in a list of playlist dictionaries
     """
     playlists = Playlist.query.all()
-    return {'playlists': [playlist.to_dict() for playlist in playlists]}
+    return jsonify({'playlists': [playlist.to_dict() for playlist in playlists]})
 
 
 @playlist_routes.route('', methods=['POST'])
+# @login_required
 def post_playlist():
+    """
+    Create a new playlist
+    """
+    data = request.get_json()
+
+    # if 'title' not in data:
+    #     return jsonify({"error": "Missing required data: title"}), 400
+
+    title = data.get('title') or "test"
+
+    new_playlist = Playlist(
+        creator_id=current_user.id,
+        title=title,
+    )
+
+    db.session.add(new_playlist)
+    db.session.commit()
+
+    return jsonify(new_playlist.to_dict()), 201
+
+
+@playlist_routes.route('/<int:playlist_id>', methods=['GET'])
+# @login_required
+def get_playlist(playlist_id):
+    """
+    Get details of a specific playlist
+    """
+    playlist = Playlist.query.get(playlist_id)
+
+    if not playlist:
+        return jsonify({"error": "Playlist not found"}), 404
+
+    return jsonify(playlist.to_dict())
+
+
+@playlist_routes.route('/<int:playlist_id>', methods=['PUT'])
+# @login_required
+def update_playlist(playlist_id):
+    """
+    Update details of a specific playlist
+    """
+    playlist = Playlist.query.get(playlist_id)
+
+    if not playlist:
+        return jsonify({"error": "Playlist not found"}), 404
 
     data = request.get_json()
 
-    # if 'description' not in data or 'youtube_url' not in data:
-    #     return jsonify({"error": "Missing required data"}), 400
+    # Update playlist fields based on your requirements
+    if 'title' in data:
+        playlist.title = data['title']
 
-    # description = data.get('description')
-    # youtube_url = data.get('youtube_url')
+    playlist.updated_at = datetime.now()
 
-    # try:
-    #     video = YouTube(youtube_url)
-    #     audio_stream = video.streams.filter(only_audio=True).first()
+    db.session.commit()
 
-    #     print(video)
-    #     print(audio_stream)
+    return jsonify(playlist.to_dict())
 
-    #     if audio_stream:
-    #         # Download the audio as bytes
-    #         audio_content = audio_stream.stream_to_buffer(
-    #             buffer=io.BytesIO()).read()
-    #         # audio_bytes = audio_stream.stream_to_buffer(buffer=io.BytesIO())
 
-    #         # Encode the bytes in base64 for storage
-    #         audio_base64 = base64.b64encode(audio_content).decode('utf-8')
+@playlist_routes.route('/<int:playlist_id>', methods=['DELETE'])
+# @login_required
+def delete_playlist(playlist_id):
+    """
+    Delete a specific playlist
+    """
+    playlist = Playlist.query.get(playlist_id)
 
-    #         new_audio = Audio(
-    #             uploader_id=current_user.id,
-    #             title=video.title,
-    #             description=description,
-    #             youtube_url=youtube_url,
-    #             mp3_file_url=audio_base64
-    #         )
-    #         db.session.add(new_audio)
-    #         db.session.commit()
+    if not playlist:
+        return jsonify({"error": "Playlist not found"}), 404
 
-    #         return jsonify(new_audio.to_dict()), 200
-    #     else:
-    #         error_message = "Error converting video: Unable to obtain audio stream"
-    #         return {'error': error_message}, 500
+    db.session.delete(playlist)
+    db.session.commit()
 
-    # except Exception as e:
-    #     error_message = f"Error converting video: {str(e)}"
-    #     print(error_message)
-    #     return {'error': error_message}, 500
+    return jsonify({"message": "Playlist deleted successfully"}), 200
+
+
+@playlist_routes.route('/<int:playlist_id>/add_item', methods=['POST'])
+# @login_required
+def add_playlist_item(playlist_id):
+    """
+    Add a PlaylistItem to a specific playlist
+    """
+    playlist = Playlist.query.get(playlist_id)
+
+    if not playlist:
+        return jsonify({"error": "Playlist not found"}), 404
+
+    data = request.get_json()
+
+    if 'title' not in data or 'artist' not in data:
+        return jsonify({"error": "Missing required data: title or artist"}), 400
+
+    title = data.get('title')
+    artist = data.get('artist')
+
+    # Create a new PlaylistItem associated with the current Playlist
+    new_playlist_item = PlaylistItem(
+        playlist_id=playlist.id,
+        title=title,
+        artist=artist,
+        # Add other fields as needed
+    )
+
+    db.session.add(new_playlist_item)
+    db.session.commit()
+
+    return jsonify(new_playlist_item.to_dict()), 201

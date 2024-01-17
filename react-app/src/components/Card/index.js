@@ -12,6 +12,8 @@ export default function Card({ data, chooseTrack }) {
   const [lyrics, setLyrics] = useState("");
   const dispatch = useDispatch();
 
+  console.log("data!!!!!!!!", data);
+
   const handlePlay = () => {
     dispatch(getLyrics(artist, title));
     chooseTrack(data);

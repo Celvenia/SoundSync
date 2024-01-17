@@ -51,6 +51,7 @@ function App() {
   return (
     <MusicProvider>
       <div className="outerWrap">
+        <Navigation />
         <div className="App">
           <SideBar data={data} />
           <div className="main">
@@ -74,7 +75,7 @@ function App() {
       {/* <div className="musicPlayer">
         {accessToken && <MusicPlayer accessToken={accessToken} />}
       </div> */}
-        </MusicProvider>
+    </MusicProvider>
   );
 }
 
