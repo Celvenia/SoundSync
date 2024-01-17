@@ -17,7 +17,6 @@ export default function Card({ data, chooseTrack }) {
     chooseTrack(data);
   };
 
-
   return (
     <div className="card" onClick={handlePlay}>
       <div className="cardImage">

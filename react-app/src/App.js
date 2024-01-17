@@ -74,7 +74,7 @@ function App() {
       {/* <div className="musicPlayer">
         {accessToken && <MusicPlayer accessToken={accessToken} />}
       </div> */}
-    </MusicProvider>
+        </MusicProvider>
   );
 }
 

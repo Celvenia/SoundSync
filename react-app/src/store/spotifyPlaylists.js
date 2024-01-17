@@ -129,13 +129,40 @@ export const deletePlaylistTracks = (accessToken, playlist, data) => {
   };
 };
 
+// export const deletePlaylistTracks = (accessToken, playlist, data) => {
+//   return async (dispatch) => {
+//     try {
+//       const response = await fetch(`/api/playlists/${playlist.id}/tracks`, {
+//         method: "DELETE",
+//         headers: {
+//           Authorization: `Bearer ${accessToken}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(data),
+//       });
+
+//       if (response.ok) {
+//         dispatch(deletePlaylistSuccess(playlist));
+//         return true;
+//       } else {
+//         const errorData = await response.json().catch(() => null);
+//         dispatch(deletePlaylistFailure(errorData));
+//         return false;
+//       }
+//     } catch (error) {
+//       dispatch(deletePlaylistFailure(error));
+//       return false;
+//     }
+//   };
+// };
+
 const initialState = {
   playlists: null,
   playlistTracks: null,
   error: null,
 };
 
-const playlistsReducer = (state = initialState, action) => {
+const spotifyPlaylistsReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_PLAYLISTS_SUCCESS:
       return {
@@ -178,4 +205,4 @@ const playlistsReducer = (state = initialState, action) => {
   }
 };
 
-export default playlistsReducer;
+export default spotifyPlaylistsReducer;

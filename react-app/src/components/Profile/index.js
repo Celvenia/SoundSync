@@ -23,11 +23,11 @@ export default function Profile() {
       </button>
       {dropdownVisible && displayName && (
         <div className="dropdown">
-          <label>Display Name: </label>
+          <strong>Display Name:</strong>
           <p>{displayName}</p>
-          <label>Email:</label>
+          <strong>Email:</strong>
           <p> {email}</p>
-          <label>Spotify ID: </label>
+          <strong>Spotify ID: </strong>
           <p>{id}</p>
         </div>
       )}

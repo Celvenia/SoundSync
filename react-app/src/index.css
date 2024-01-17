@@ -48,7 +48,7 @@ a {
 }
 
 .App {
-  height: calc(100vh - 90px);
+  /* height: calc(100vh - 90px); */
   background: #121212;
   display: flex;
 }

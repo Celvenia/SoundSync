@@ -36,7 +36,7 @@ export default function MusicPlayer({ accessToken, trackUri }) {
     setPlay(true);
   }, [trackUri]);
 
-  console.log(trackUri);
+  console.log(trackUri, "MusicPlayer line 39");
 
   if (!accessToken) return;
 
