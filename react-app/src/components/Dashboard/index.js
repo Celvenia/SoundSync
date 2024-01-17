@@ -22,16 +22,22 @@ export default function Dashboard({ code }) {
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState([]);
   const dispatch = useDispatch();
-  const { setTrackUri } = useMusic();
+  const { playingTrackUri, setTrackUri } = useMusic();
 
-  const chooseTrack = (track) => {
+  const chooseTrack = async (track) => {
+    // console.log(playingTrackUri);
+    // await setTrackUri(track);
+    // console.log(trackUri);
+    // console.log(track);
     setPlayingTrack(track);
+    // console.log("2", playingTrackUri);
     setSearch("");
     setLyrics("");
   };
 
   useEffect(() => {
     if (!lyricsObj.lyrics) return;
+    setLyrics("");
     setLyrics(lyricsObj.lyrics);
     return () => {};
   }, [lyrics]);
@@ -44,7 +50,6 @@ export default function Dashboard({ code }) {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
     let userInfo = dispatch(getUserInfo(accessToken));
-    console.log(userInfo);
   }, [accessToken]);
 
   useEffect(() => {

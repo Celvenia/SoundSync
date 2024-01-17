@@ -10,11 +10,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Playlists from "../Playlists";
 
 export default function SideBar({ data }) {
-  const userInfo = useSelector((state) => state.spotifyReducer);
-  const playlistsObj = useSelector((state) => state.playlistsReducer);
-  const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
-  const { displayName, email, id } = userInfo;
-  const dispatch = useDispatch();
+  // const userInfo = useSelector((state) => state.spotifyReducer);
+  // const playlistsObj = useSelector((state) => state.spotifyPlaylistsReducer);
+  // const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+  // const { displayName, email, id } = userInfo;
+  // const dispatch = useDispatch();
 
   const logo =
     "https://res.cloudinary.com/dtzv3fsas/image/upload/v1683932465/SpotifyClone/Spotify_Logo_RGB_White_etpfol.png";
@@ -53,11 +53,6 @@ export default function SideBar({ data }) {
       <ul className="sideBottom">
         <Playlists />
       </ul>
-      {/* <Dropdown data={data} />
-      <div>Privacy</div>
-      <div>Privacy</div>
-      <div>Privacy</div>
-      <div>Privacy</div> */}
     </div>
   );
 }

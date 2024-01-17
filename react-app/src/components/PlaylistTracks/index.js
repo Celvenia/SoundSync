@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MusicPlayer from "../MusicPlayer";
-import { getPlaylistTracks, deletePlaylistTracks } from "../../store/playlists";
+import {
+  getPlaylistTracks,
+  deletePlaylistTracks,
+} from "../../store/spotifyPlaylists";
 
 export default function PlaylistTracks({ playlist }) {
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
   const playlistTracks = useSelector(
-    (state) => state.playlistsReducer.playlistTracks
+    (state) => state.spotifyPlaylistsReducer.playlistTracks
   );
   const [playingTrack, setPlayingTrack] = useState(null);
 
@@ -22,7 +25,6 @@ export default function PlaylistTracks({ playlist }) {
   };
 
   const handleDeleteTrack = async (playlist, track) => {
-    console.log(playlist, track, "playlist!!!!!!!!!!, track!!!!!!!!!!");
     let data = {
       tracks: [
         {
@@ -47,14 +49,14 @@ export default function PlaylistTracks({ playlist }) {
       {playlistTracks && playlistTracks.length > 0 ? (
         <ul>
           {playlistTracks.map((track) => (
-            <>
-              <li key={track.track.id} onClick={() => chooseTrack(track.track)}>
+            <div key={track.track.id}>
+              <li onClick={() => chooseTrack(track.track)}>
                 {track.track.name} - {track.track.artists[0].name}
               </li>
               <button onClick={() => handleDeleteTrack(playlist, track)}>
                 Delete
               </button>
-            </>
+            </div>
           ))}
         </ul>
       ) : (

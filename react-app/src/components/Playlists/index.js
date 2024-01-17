@@ -4,18 +4,21 @@ import {
   deletePlaylistTracks,
   getPlaylists,
   getPlaylistTracks,
-} from "../../store/playlists";
+} from "../../store/spotifyPlaylists";
 import PlaylistTracks from "../PlaylistTracks";
 import "./Playlists.css";
 
 export default function Playlists() {
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
-  const playlists = useSelector((state) => state.playlistsReducer.playlists);
+  const playlists = useSelector(
+    (state) => state.spotifyPlaylistsReducer.playlists
+  );
   const userInfo = useSelector((state) => state.spotifyReducer);
   const { displayName, email, id } = userInfo;
 
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     if (accessToken && id) {
@@ -95,16 +98,13 @@ export default function Playlists() {
       {playlists && playlists.items ? (
         <ul>
           {playlists.items.map((playlist) => (
-            <>
-              <li
-                key={playlist.id}
-                className="playlistCard"
-                onClick={() => handlePlaylistClick(playlist)}
-              >
-                {playlist.name}
-              </li>
-              {/* <button onClick={() => handlePlaylistDelete(playlist.id)}> */}
-            </>
+            <li
+              key={playlist.id}
+              className="playlistCard"
+              onClick={() => handlePlaylistClick(playlist)}
+            >
+              {playlist.name}
+            </li>
           ))}
         </ul>
       ) : (
