@@ -4,12 +4,14 @@ import session from "./session";
 import spotifyReducer from "./spotify";
 import lyricsReducer from "./lyrics";
 import spotifyPlaylistsReducer from "./spotifyPlaylists";
+import playlistReducer from "./playlist";
 
 const rootReducer = combineReducers({
   session,
   spotifyReducer,
   lyricsReducer,
   spotifyPlaylistsReducer,
+  playlistReducer,
 });
 
 let enhancer;
