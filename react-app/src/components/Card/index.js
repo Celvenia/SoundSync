@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlay } from "@fortawesome/free-solid-svg-icons";
 import "./Card.css";
+import { postPlaylistTrack } from "../../store/playlist";
 
 export default function Card({ data, chooseTrack }) {
   const { albumUrl, artist, title, uri } = data;
@@ -12,9 +13,8 @@ export default function Card({ data, chooseTrack }) {
   const [lyrics, setLyrics] = useState("");
   const dispatch = useDispatch();
 
-  console.log("data!!!!!!!!", data);
-
   const handlePlay = () => {
+    dispatch(postPlaylistTrack(2, data));
     dispatch(getLyrics(artist, title));
     chooseTrack(data);
   };

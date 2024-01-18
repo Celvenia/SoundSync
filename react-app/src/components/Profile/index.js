@@ -1,15 +1,23 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/session";
 import "./Profile.css";
 
 export default function Profile() {
   const userInfo = useSelector((state) => state.spotifyReducer);
+  const sessionUser = useSelector((state) => state.session.user);
   const { displayName, email, id } = userInfo;
+  const dispatch = useDispatch();
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
   };
 
   return (
@@ -29,6 +37,7 @@ export default function Profile() {
           <p> {email}</p>
           <strong>Spotify ID: </strong>
           <p>{id}</p>
+          <button onClick={(e) => handleLogout(e)}>Logout</button>
         </div>
       )}
     </div>

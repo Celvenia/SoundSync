@@ -4,6 +4,7 @@ const GET_PLAYLISTS = "playlist/GET_PLAYLISTS";
 const UPDATE_PLAYLIST = "playlist/UPDATE_PLAYLIST";
 const POST_PLAYLIST = "playlist/POST_PLAYLIST";
 const DELETE_PLAYLIST = "playlist/DELETE_PLAYLIST";
+const POST_PLAYLIST_TRACK = "playlist/POST_PLAYLIST_TRACK";
 
 // action creators - define actions (objects with type/data)
 const getPlaylistAC = (data) => ({
@@ -28,6 +29,11 @@ const updatePlaylistAC = (data) => ({
 
 const deletePlaylistAC = (data) => ({
   type: DELETE_PLAYLIST,
+  data,
+});
+
+const postPlaylistTrackAC = (data) => ({
+  type: POST_PLAYLIST_TRACK,
   data,
 });
 
@@ -133,6 +139,32 @@ export const deletePlaylist = (id) => async (dispatch) => {
   }
 };
 
+export const postPlaylistTrack =
+  (playlistId, trackData) => async (dispatch) => {
+    const response = await fetch(`/api/playlists/${playlistId}/add_item`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(trackData),
+    });
+
+    console.log(trackData);
+
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(postPlaylistTrackAC(data));
+      return data;
+    } else if (response.status < 500) {
+      const data = await response.json();
+      if (data.errors) {
+        return data.errors;
+      }
+    } else {
+      return ["An error occurred. Please try again."];
+    }
+  };
+
 // state
 const initialState = {};
 
@@ -160,6 +192,11 @@ export default function playlistReducer(state = initialState, action) {
     }
     case DELETE_PLAYLIST: {
       delete newState[action.data.deleted.id];
+      return newState;
+    }
+    case POST_PLAYLIST_TRACK: {
+      const { playlist_id } = action.data;
+      newState[playlist_id].items.push(action.data);
       return newState;
     }
     default:

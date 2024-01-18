@@ -86,7 +86,6 @@ export const getPlaylistTracks = (accessToken, playlistId) => {
             uri: item.track.uri,
           };
         });
-        console.log(tracksWithURIs);
         dispatch(getPlaylistTracksSuccess(tracksWithURIs));
         return tracksWithURIs;
       } else {

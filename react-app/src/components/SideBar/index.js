@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { faBook, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHome,
+  faMagnifyingGlass,
+  faBook,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom/cjs/react-router-dom";
 import Dropdown from "../Dropdown";
 
@@ -45,10 +49,10 @@ export default function SideBar({ data }) {
       <ul className="sideBottom">
         <li className="library">
           {" "}
-          <FontAwesomeIcon icon={faBook} />
-          Your Library
+          <FontAwesomeIcon icon={faPlus} />
+          Add Playlist
         </li>
-        <FontAwesomeIcon icon={faPlus} />
+        {/* <FontAwesomeIcon icon={faPlus} /> */}
       </ul>
       <ul className="sideBottom">
         <Playlists />

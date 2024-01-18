@@ -51,7 +51,7 @@ function App() {
   return (
     <MusicProvider>
       <div className="outerWrap">
-        <Navigation />
+        {/* <Navigation isLoaded={isLoaded} /> */}
         <div className="App">
           <SideBar data={data} />
           <div className="main">

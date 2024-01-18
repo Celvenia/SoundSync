@@ -2,28 +2,30 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   deletePlaylistTracks,
-  getPlaylists,
+  // getPlaylists,
   getPlaylistTracks,
 } from "../../store/spotifyPlaylists";
 import PlaylistTracks from "../PlaylistTracks";
 import "./Playlists.css";
+import { getPlaylists } from "../../store/playlist";
 
 export default function Playlists() {
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
-  const playlists = useSelector(
-    (state) => state.spotifyPlaylistsReducer.playlists
-  );
+  // const playlists = useSelector(
+  //   (state) => state.spotifyPlaylistsReducer.playlists
+  // );
+  const playlists = useSelector((state) => state.playlistsReducer);
   const userInfo = useSelector((state) => state.spotifyReducer);
   const { displayName, email, id } = userInfo;
 
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const dispatch = useDispatch();
 
-
   useEffect(() => {
-    if (accessToken && id) {
-      dispatch(getPlaylists(id, accessToken));
-    }
+    // if (accessToken && id) {
+    //   dispatch(getPlaylists(id, accessToken));
+    // }
+    dispatch(getPlaylists());
   }, [accessToken, dispatch, id]);
 
   const handlePlaylistClick = async (playlist) => {
