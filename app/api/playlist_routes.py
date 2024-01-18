@@ -108,18 +108,21 @@ def add_playlist_item(playlist_id):
 
     data = request.get_json()
 
-    if 'title' not in data or 'artist' not in data:
-        return jsonify({"error": "Missing required data: title or artist"}), 400
+    if 'artist' not in data or 'title' not in data or 'albumUrl' not in data or 'uri' not in data:
+        return jsonify({"error": "Missing required data: artist, title, albumUrl, or uri"}), 400
 
-    title = data.get('title')
     artist = data.get('artist')
+    title = data.get('title')
+    uri = data.get('uri')
+    album_url = data.get('albumUrl')
 
     # Create a new PlaylistItem associated with the current Playlist
     new_playlist_item = PlaylistItem(
         playlist_id=playlist.id,
-        title=title,
+        album_url=album_url,
         artist=artist,
-        # Add other fields as needed
+        title=title,
+        uri=uri,
     )
 
     db.session.add(new_playlist_item)

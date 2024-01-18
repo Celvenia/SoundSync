@@ -66,28 +66,56 @@ def logout():
     """
     Logs a user out
     """
+
+    # session.pop('spotify_access_token', None)
+    # session.pop('spotify_refresh_token', None)
+    # session.pop('spotify_expires_at', None)
     logout_user()
     return {'message': 'User logged out'}
 
+
+# @auth_routes.route('/signup', methods=['POST'])
+# def sign_up():
+#     """
+#     Creates a new user and logs them in
+#     """
+#     form = SignUpForm()
+#     form['csrf_token'].data = request.cookies['csrf_token']
+#     if form.validate_on_submit():
+#         user = User(
+#             username=form.data['username'],
+#             email=form.data['email'],
+#             password=form.data['password']
+#         )
+#         db.session.add(user)
+#         db.session.commit()
+#         login_user(user)
+#         return user.to_dict()
+#     return {'errors': validation_errors_to_error_messages(form.errors)}, 401
 
 @auth_routes.route('/signup', methods=['POST'])
 def sign_up():
     """
     Creates a new user and logs them in
     """
-    form = SignUpForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
-    if form.validate_on_submit():
+    try:
+        data = request.json()
+        print(data)
+        # Create a new user
         user = User(
-            username=form.data['username'],
-            email=form.data['email'],
-            password=form.data['password']
+            username=data.get('userName'),
+            email=data.get('email'),
+            spotify_id=data.get('spotifyId')
         )
         db.session.add(user)
         db.session.commit()
+
+        # Log in the user
         login_user(user)
+
         return user.to_dict()
-    return {'errors': validation_errors_to_error_messages(form.errors)}, 401
+    except Exception as e:
+        return {'errors': [str(e)]}, 401
 
 
 @auth_routes.route('/unauthorized')

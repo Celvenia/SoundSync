@@ -28,7 +28,7 @@ function LoginFormModal() {
     <>
       <h1>Log In</h1>
       <a className="login-btn" href={AUTH_URL}>
-        Login With Spotify
+        Login With Spotify 
       </a>
       {/* 
       <form onSubmit={handleSubmit}>

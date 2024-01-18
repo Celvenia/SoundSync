@@ -9,6 +9,7 @@ import Playlists from "../Playlists";
 import "./Dashboard.css";
 import { useMusic } from "../../context/MusicContext";
 import { getPlaylists, postPlaylist } from "../../store/playlist";
+import { signUp } from "../../store/session";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -17,6 +18,7 @@ const spotifyApi = new SpotifyWebApi({
 export default function Dashboard({ code }) {
   const token = UseAuth(code);
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+  const userInfo = useSelector((state) => state.spotifyReducer);
   const lyricsObj = useSelector((state) => state.lyricsReducer);
   const playlistsObj = useSelector((state) => state.playlistsReducer);
   const sessionUser = useSelector((state) => state.session.user);
@@ -28,12 +30,7 @@ export default function Dashboard({ code }) {
   const { playingTrackUri, setTrackUri } = useMusic();
 
   const chooseTrack = async (track) => {
-    // console.log(playingTrackUri);
-    // await setTrackUri(track);
-    // console.log(trackUri);
-    // console.log(track);
     setPlayingTrack(track);
-    // console.log("2", playingTrackUri);
     setSearch("");
     setLyrics("");
   };
@@ -52,7 +49,10 @@ export default function Dashboard({ code }) {
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
-    let userInfo = dispatch(getUserInfo(accessToken));
+    dispatch(getUserInfo(accessToken));
+    if (userInfo) {
+      dispatch(signUp(userInfo));
+    }
   }, [accessToken]);
 
   useEffect(() => {
