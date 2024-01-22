@@ -15,7 +15,7 @@ html {
   background: #000000;
   margin: 0;
   padding: 0;
-  /* overflow: hidden; */
+  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -54,29 +54,11 @@ a {
 }
 
 .main {
-  width: 100%;
+  width: 100vw;
   color: #fff;
-  height: 100%;
-  overflow-y: scroll;
+  height: 100vh;
   overflow-x: hidden;
-}
-
-.main::-webkit-scrollbar {
-  width: 10px;
-}
-
-.main::-webkit-scrollbar-track {
-  background: #121212;
-  border-radius: 5px;
-}
-
-.main::-webkit-scrollbar-thumb {
-  background: #282828;
-  border-radius: 5px;
-}
-
-.main::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  margin: 10px;
 }
 
 .main h2 {
@@ -107,4 +89,22 @@ a {
   left: 0;
   right: 0;
   z-index: 1000;
+}
+
+.main::-webkit-scrollbar {
+  width: 5px;
+}
+
+.main::-webkit-scrollbar-track {
+  background: #282828;
+  border-radius: 5px;
+}
+
+.main::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+.main::-webkit-scrollbar-thumb:hover {
+  background: #777;
 }

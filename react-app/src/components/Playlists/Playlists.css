@@ -1,19 +1,29 @@
 .playlistCard {
+  display: flex;
   list-style: none;
   background: #121212;
   margin: 2%;
-  padding: 10px;
+  padding: 20px;
   border-radius: 10px;
   color: #b3b3b3;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
 }
 
-.playlistCard li {
-  margin: 10px;
+.playlistCard:hover {
+  color: #fff;
+  cursor: pointer;
 }
 
-.playlistCard li:hover {
+.playlistCard-item {
+  border-top: solid 2px #000;
+  margin: 5px 0;
+  padding: 20px;
+}
+
+.playlistCard-item:hover {
   color: #fff;
   cursor: pointer;
 }

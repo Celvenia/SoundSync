@@ -163,3 +163,33 @@ def refresh_token():
         return jsonify(token_info)
     except Exception as e:
         return 'Failed to refresh access token', 400
+
+
+@auth_routes.route('/verify_user', methods=['POST'])
+def verify_user():
+    """
+    Verifies the user on the backend
+    """
+    try:
+        data = request.json
+        # Check if the user exists in the database based on the received data
+        user = User.query.filter_by(spotify_id=data.get('id')).first()
+
+        if user:
+            # User exists, log in the user
+            login_user(user)
+            return user.to_dict()
+        else:
+            # User does not exist, create a new user
+            new_user = User(
+                username=data.get('display_name'),
+                email=data.get('email'),
+                spotify_id=data.get('id')
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            return new_user.to_dict()
+
+    except Exception as e:
+        return {'errors': [str(e)]}, 401

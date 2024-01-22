@@ -12,7 +12,8 @@ def get_playlists():
     """
     Query for all playlists and returns them in a list of playlist dictionaries
     """
-    playlists = Playlist.query.all()
+    # playlists = Playlist.query.all()
+    playlists = Playlist.query.filter_by(creator_id=current_user.id).all()
     return jsonify({'playlists': [playlist.to_dict() for playlist in playlists]})
 
 
@@ -115,6 +116,17 @@ def add_playlist_item(playlist_id):
     title = data.get('title')
     uri = data.get('uri')
     album_url = data.get('albumUrl')
+
+    # Check if the playlist item already exists in the playlist
+    existing_item = PlaylistItem.query.filter_by(
+        playlist_id=playlist.id,
+        artist=artist,
+        title=title,
+        uri=uri,
+    ).first()
+
+    if existing_item:
+        return jsonify(existing_item.to_dict()), 200
 
     # Create a new PlaylistItem associated with the current Playlist
     new_playlist_item = PlaylistItem(

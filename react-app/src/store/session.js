@@ -13,46 +13,42 @@ const removeUser = () => ({
 
 const initialState = { user: null };
 
-export const authenticate = () => async (dispatch) => {
-  const response = await fetch("/api/auth/", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (response.ok) {
-    const data = await response.json();
-    if (data.errors) {
-      return;
-    }
+// export const authenticate = () => async (dispatch) => {
+//   const response = await fetch("/api/auth/", {
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+//   if (response.ok) {
+//     const data = await response.json();
+//     if (data.errors) {
+//       return;
+//     }
 
-    dispatch(setUser(data));
-  }
-};
+//     dispatch(setUser(data));
+//   }
+// };
 
 // export const login = (email, password) => async (dispatch) => {
-export const login = (email) => async (dispatch) => {
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      // password,
-    }),
-  });
+export const login = (userInfo) => async (dispatch) => {
+  try {
+    const response = await fetch("/api/auth/verify_user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+    });
 
-  if (response.ok) {
-    const data = await response.json();
-    dispatch(setUser(data));
-    return null;
-  } else if (response.status < 500) {
-    const data = await response.json();
-    if (data.errors) {
-      return data.errors;
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(setUser(data));
+    } else {
+      const data = await response.json();
+      console.error("Login failed:", data);
     }
-  } else {
-    return ["An error occurred. Please try again."];
+  } catch (error) {
+    console.error("Error during login:", error);
   }
 };
 
@@ -71,7 +67,7 @@ export const logout = () => async (dispatch) => {
 // export const signUp = (username, email, password) => async (dispatch) => {
 export const signUp = (userInfo) => async (dispatch) => {
   const { username, email, spotifyId } = userInfo;
-  console.log(userInfo);
+
   const response = await fetch("/api/auth/signup", {
     method: "POST",
     headers: {

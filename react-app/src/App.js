@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import SignupFormPage from "./components/SignupFormPage";
 import LoginFormPage from "./components/LoginFormPage";
-import { authenticate } from "./store/session";
+import { authenticate, login } from "./store/session";
 import Navigation from "./components/Navigation";
 import HomePage from "./components/HomePage";
 import MusicPlayer from "./components/MusicPlayer";
@@ -30,22 +30,11 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const sessionUser = useSelector((state) => state.session.user);
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
-
-  const [spotifyToken, setSpotifyToken] = useState("");
-  const [nowPlaying, setNowPlaying] = useState({});
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  const songs = [];
-
-  const data = [
-    { name: "A", value: 1 },
-    { name: "B", value: 2 },
-    { name: "C", value: 3 },
-  ];
+  const userInfo = useSelector((state) => state.spotifyReducer);
 
   useEffect(() => {
-    dispatch(authenticate()).then(() => setIsLoaded(true));
     if (!accessToken) return;
+    // dispatch(login(userInfo)).then(() => setIsLoaded(true));
   }, [dispatch, accessToken]);
 
   return (
@@ -53,21 +42,29 @@ function App() {
       <div className="outerWrap">
         {/* <Navigation isLoaded={isLoaded} /> */}
         <div className="App">
-          <SideBar data={data} />
+          <SideBar />
           <div className="main">
             {/* <Navigation isLoaded={isLoaded} /> */}
             <Profile />
             <div className="mainContent">
-              {isLoaded && (
-                <Switch>
-                  <Route path="/search">
-                    {code ? <Dashboard code={code} /> : <LoginFormModal />}
-                  </Route>
-                  <Route path="/">
-                    {code ? <Dashboard code={code} /> : <LoginFormModal />}
-                  </Route>
-                </Switch>
-              )}
+              {/* {isLoaded && ( */}
+              <Switch>
+                <Route path="/search">
+                  {code || accessToken ? (
+                    <Dashboard code={code} />
+                  ) : (
+                    <LoginFormModal />
+                  )}
+                </Route>
+                <Route path="/">
+                  {code || accessToken || sessionUser ? (
+                    <Dashboard code={code} />
+                  ) : (
+                    <LoginFormModal />
+                  )}
+                </Route>
+              </Switch>
+              {/* )} */}
             </div>
           </div>
         </div>

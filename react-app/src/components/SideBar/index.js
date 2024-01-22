@@ -12,19 +12,37 @@ import Dropdown from "../Dropdown";
 import "./SideBar.css";
 import { useDispatch, useSelector } from "react-redux";
 import Playlists from "../Playlists";
+import { getPlaylists, postPlaylist } from "../../store/playlist";
 
 export default function SideBar({ data }) {
   // const userInfo = useSelector((state) => state.spotifyReducer);
   // const playlistsObj = useSelector((state) => state.spotifyPlaylistsReducer);
-  // const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+  const playlistsObj = useSelector((state) => state.playlistReducer);
+  const playlists = Object.values(playlistsObj);
+  const sessionUser = useSelector((state) => state.session.user);
+  const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
   // const { displayName, email, id } = userInfo;
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (sessionUser) {
+      dispatch(getPlaylists());
+    }
+  }, []);
 
   const logo =
     "https://res.cloudinary.com/dtzv3fsas/image/upload/v1683932465/SpotifyClone/Spotify_Logo_RGB_White_etpfol.png";
 
+  const handlePostPlaylistClick = () => {
+    let data = {
+      creator_id: sessionUser.id,
+      title: "New Playlist",
+    };
+    dispatch(postPlaylist(data));
+  };
+
   return (
-    <div className="sideBar">
+    <div className={accessToken ? "sideBar" : "sideBarLong"}>
       <ul className="sideTop">
         <li className="logo">
           <img src={logo}></img>
@@ -47,16 +65,21 @@ export default function SideBar({ data }) {
         </li>
       </ul>
       <ul className="sideBottom">
-        <li className="library">
+        <li className="library" onClick={handlePostPlaylistClick}>
           {" "}
           <FontAwesomeIcon icon={faPlus} />
           Add Playlist
         </li>
-        {/* <FontAwesomeIcon icon={faPlus} /> */}
       </ul>
-      <ul className="sideBottom">
-        <Playlists />
-      </ul>
+      {sessionUser && accessToken && (
+        <div>
+          {playlists.reverse().map((playlist) => (
+            <li className="playlistCard" key={playlist.id}>
+              {playlist.title}
+            </li>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
