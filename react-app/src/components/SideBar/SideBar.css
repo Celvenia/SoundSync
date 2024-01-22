@@ -1,7 +1,15 @@
 .sideBar {
   background: #040404;
   width: 400px;
+  height: 90vh;
+  overflow-y: auto;
+}
+
+.sideBarLong {
+  background: #040404;
+  width: 400px;
   height: 100vh;
+  overflow-y: auto;
 }
 
 .sideTop {
@@ -79,4 +87,21 @@
 .svg-inline--fa.fa-plus:hover {
   color: #fff;
   cursor: pointer;
+}
+
+.sideBar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sideBar::-webkit-scrollbar-track {
+  background: #282828;
+}
+
+.sideBar::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+.sideBar::-webkit-scrollbar-thumb:hover {
+  background: #777;
 }

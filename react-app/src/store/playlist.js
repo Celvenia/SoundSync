@@ -149,7 +149,6 @@ export const postPlaylistTrack =
       body: JSON.stringify(trackData),
     });
 
-    console.log(trackData);
 
     if (response.ok) {
       const data = await response.json();

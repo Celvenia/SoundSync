@@ -5,6 +5,7 @@ export const SPOTIFY_REFRESH_SUCCESS = "auth/SPOTIFY_REFRESH_SUCCESS";
 export const SPOTIFY_REFRESH_FAILURE = "auth/SPOTIFY_REFRESH_FAILURE";
 export const SPOTIFY_USER_SUCCESS = "auth/SPOTIFY_USER_SUCCESS";
 export const SPOTIFY_USER_FAILURE = "auth/SPOTIFY_USER_FAILURE";
+export const SPOTIFY_LOGOUT = "auth/SPOTIFY_LOGOUT";
 
 // authActions.js
 export const spotifyLoginSuccess = (data) => ({
@@ -35,6 +36,10 @@ export const spotifyUserSuccess = (data) => ({
 export const spotifyUserFailure = (error) => ({
   type: SPOTIFY_USER_FAILURE,
   error,
+});
+
+export const spotifyLogoutAC = () => ({
+  type: SPOTIFY_LOGOUT,
 });
 
 export const loginSpotify = (data) => {
@@ -98,8 +103,26 @@ export const getUserInfo = (accessToken) => {
 
       if (response.ok) {
         const userInfo = await response.json();
-        let data = dispatch(spotifyUserSuccess(userInfo));
-        return data;
+
+        // Send user data to the backend for verification and seeding
+        const backendResponse = await fetch("/api/auth/verify_user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        });
+
+        if (backendResponse.ok) {
+          // Backend verified the user, dispatch success action
+          let data = dispatch(spotifyUserSuccess(userInfo));
+          return data;
+        } else {
+          // Backend rejected the user, dispatch failure action
+          const errorData = await backendResponse.json();
+          let data = dispatch(spotifyUserFailure(errorData));
+          return data;
+        }
       } else {
         const errorData = await response.json();
         let data = dispatch(spotifyUserFailure(errorData));
@@ -111,6 +134,27 @@ export const getUserInfo = (accessToken) => {
   };
 };
 
+export const spotifyLogout = () => {
+  return async (dispatch) => {
+    //   try {
+    //     const response = await fetch("/api/auth/logout", {
+    //       method: "POST",
+    //     });
+
+    //     if (response.ok) {
+    //       dispatch(spotifyLogout());
+    //     } else {
+    //       // Handle logout failure
+    //       const errorData = await response.json();
+    //       console.error("Logout failed:", errorData);
+    //     }
+    //   } catch (error) {
+    //     console.error("Logout error:", error);
+    //   }
+    // };
+    dispatch(spotifyLogoutAC());
+  };
+};
 
 // authReducer.js
 const initialState = {
@@ -165,6 +209,19 @@ const spotifyReducer = (state = initialState, action) => {
       return {
         ...state,
       };
+    case SPOTIFY_LOGOUT:
+      const newState = {
+        displayName: null,
+        id: null,
+        email: null,
+        accessToken: null,
+        refreshToken: null,
+        expiresIn: null,
+        expiresAt: null,
+        scope: null,
+        error: null,
+      };
+      return newState;
     default:
       return state;
   }

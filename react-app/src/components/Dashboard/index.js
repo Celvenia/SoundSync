@@ -8,8 +8,9 @@ import { getUserInfo } from "../../store/spotify";
 import Playlists from "../Playlists";
 import "./Dashboard.css";
 import { useMusic } from "../../context/MusicContext";
-import { getPlaylists, postPlaylist } from "../../store/playlist";
-import { signUp } from "../../store/session";
+
+import { signUp, login } from "../../store/session";
+import LoginFormModal from "../LoginFormModal";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -20,7 +21,7 @@ export default function Dashboard({ code }) {
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
   const userInfo = useSelector((state) => state.spotifyReducer);
   const lyricsObj = useSelector((state) => state.lyricsReducer);
-  const playlistsObj = useSelector((state) => state.playlistsReducer);
+  const playlistsObj = useSelector((state) => state.playlistReducer);
   const sessionUser = useSelector((state) => state.session.user);
   const [search, setSearch] = useState("");
   const [lyrics, setLyrics] = useState("");
@@ -36,13 +37,6 @@ export default function Dashboard({ code }) {
   };
 
   useEffect(() => {
-    if (!lyricsObj.lyrics) return;
-    setLyrics("");
-    setLyrics(lyricsObj.lyrics);
-    return () => {};
-  }, [lyrics]);
-
-  useEffect(() => {
     if (!playingTrack) return;
   }, [playingTrack]);
 
@@ -50,10 +44,10 @@ export default function Dashboard({ code }) {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
     dispatch(getUserInfo(accessToken));
-    if (userInfo) {
-      dispatch(signUp(userInfo));
+    if (userInfo.email) {
+      dispatch(login(userInfo));
     }
-  }, [accessToken]);
+  }, [accessToken, userInfo.email]);
 
   useEffect(() => {
     if (!search) return setSearchResults([]);
@@ -91,14 +85,7 @@ export default function Dashboard({ code }) {
     return;
   }, [lyricsObj.lyrics]);
 
-  const handlePostPlaylistClick = () => {
-    let data = { creator_id: sessionUser.id, title: "testing" };
-    dispatch(postPlaylist(data));
-  };
-
-  console.log(playlistsObj);
-
-  return (
+  return sessionUser ? (
     <div>
       <div className="search-bar">
         <input
@@ -107,19 +94,20 @@ export default function Dashboard({ code }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={handlePostPlaylistClick}>Post Playlists</button>
       </div>
       <div className="card-wrap">
         {searchResults.map((result) => (
           <Card data={result} key={result.uri} chooseTrack={chooseTrack} />
         ))}
       </div>
-      {lyrics && <div> {lyrics} </div>}
+      {lyrics && searchResults.length <= 0 && <div> {lyrics} </div>}
       <div className="musicPlayer">
         {accessToken && (
           <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} />
         )}
       </div>
     </div>
+  ) : (
+    <LoginFormModal />
   );
 }
