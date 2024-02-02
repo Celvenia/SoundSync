@@ -194,9 +194,21 @@ export default function playlistReducer(state = initialState, action) {
       return newState;
     }
     case POST_PLAYLIST_TRACK: {
+      // const { playlist_id } = action.data;
+      // newState[playlist_id].items.push(action.data);
+      // return newState;
       const { playlist_id } = action.data;
-      newState[playlist_id].items.push(action.data);
-      return newState;
+      const newItem = action.data;
+
+      const isDuplicate = state[playlist_id].items.some(item => item.id === newItem.id);
+
+      if (!isDuplicate) {
+        const newState = { ...state };
+        newState[playlist_id].items.push(newItem);
+        return newState;
+      }
+      console.warn('Duplicate item found. Not adding to the playlist.');
+      return state;
     }
     default:
       return state;

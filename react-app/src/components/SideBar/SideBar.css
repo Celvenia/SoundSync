@@ -105,3 +105,7 @@
 .sideBar::-webkit-scrollbar-thumb:hover {
   background: #777;
 }
+
+.playlistSongs {
+  margin-top: 10px;
+}

@@ -6,7 +6,7 @@ import { faCirclePlay } from "@fortawesome/free-solid-svg-icons";
 import "./Card.css";
 import { getPlaylists, postPlaylist, postPlaylistTrack } from "../../store/playlist";
 
-export default function Card({ data, chooseTrack }) {
+export default function Card({ data, chooseTrack, selectedPlaylist, setSelectedPlaylist }) {
   const { albumUrl, artist, title, uri } = data;
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
   const playlistsObj = useSelector((state) => state.playlistReducer)
@@ -15,9 +15,16 @@ export default function Card({ data, chooseTrack }) {
   const dispatch = useDispatch();
 
   const handlePlay = async () => {
-    await dispatch(postPlaylist({title: "Recently Played"}))
+    let newPlaylist;
+    if(Object.keys(playlistsObj).length === 0) {
+      newPlaylist = await dispatch(postPlaylist({title: "New Playlist"}))
+
+      setSelectedPlaylist(newPlaylist);
+    }
     await dispatch(getPlaylists())
-    await dispatch(postPlaylistTrack(1, data));
+    const currentSelectedPlaylist = newPlaylist || selectedPlaylist;
+
+    await dispatch(postPlaylistTrack(currentSelectedPlaylist.id, data));
     await dispatch(getLyrics(artist, title));
     await chooseTrack(data);
   };

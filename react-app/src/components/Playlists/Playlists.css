@@ -28,7 +28,7 @@
   cursor: pointer;
 }
 
-.playlistCard:hover .deleteIcon {
+.playlistCard .deleteIcon:hover {
   color: red;
 }
 

@@ -15,10 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Playlists from "../Playlists";
 import { deletePlaylist, getPlaylists, postPlaylist } from "../../store/playlist";
 
-export default function SideBar({ data }) {
+export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
   const [expandedPlaylists, setExpandedPlaylists] = useState([]);
   const playlistsObj = useSelector((state) => state.playlistReducer);
-  // const [playlists, setPlaylists] = useState([])
   const playlists = Object.values(playlistsObj);
   const sessionUser = useSelector((state) => state.session.user);
   const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
@@ -34,6 +33,10 @@ export default function SideBar({ data }) {
     "https://res.cloudinary.com/dtzv3fsas/image/upload/v1683932465/SpotifyClone/Spotify_Logo_RGB_White_etpfol.png";
 
   const handlePostPlaylistClick = () => {
+    if (!sessionUser)  {
+      alert("Log in to create a playlist")
+      return;
+    }
     let data = {
       creator_id: sessionUser.id,
       title: "New Playlist",
@@ -43,9 +46,7 @@ export default function SideBar({ data }) {
 
    const handleDeletePlaylist = (e, playlist) => {
     e.stopPropagation();
-    dispatch(deletePlaylist(playlist.id)).then(() => {
-      dispatch(getPlaylists())
-    })
+    dispatch(deletePlaylist(playlist.id))
    } 
 
   const togglePlaylist = (playlistId) => {
@@ -95,23 +96,24 @@ export default function SideBar({ data }) {
               }`}
               onClick={() => togglePlaylist(playlist.id)}
             >
-              <div className="playlistTitle">
+              <div className="playlistTitle" title="see playlist songs">
                 {playlist.title}
               </div>
               <div className="deleteIconContainer">
                 <FontAwesomeIcon
                   icon={faX}
                   className="deleteIcon"
+                  title="delete playlist"
                   onClick={(e) => {
                     handleDeletePlaylist(e, playlist);
                   }}
                 />
               </div>
               {expandedPlaylists.includes(playlist.id) && (
-                <div>
-                  {playlist.items.map((song) => (
+                <div className="playlistSongs">
+                  {playlist.items.length > 0 ? playlist.items.map((song) => (
                     <div key={song.id}>{song.title} by {song.artist}</div>
-                  ))}
+                  )) : "Add songs to playlist to see them here"}
                 </div>
               )}
             </div>

@@ -11,6 +11,7 @@ import { useMusic } from "../../context/MusicContext";
 
 import { signUp, login } from "../../store/session";
 import LoginFormModal from "../LoginFormModal";
+import { getPlaylists } from "../../store/playlist";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -22,13 +23,17 @@ export default function Dashboard({ code }) {
   const userInfo = useSelector((state) => state.spotifyReducer);
   const lyricsObj = useSelector((state) => state.lyricsReducer);
   const playlistsObj = useSelector((state) => state.playlistReducer);
+  const playlists = Object.values(playlistsObj)
   const sessionUser = useSelector((state) => state.session.user);
   const [search, setSearch] = useState("");
   const [lyrics, setLyrics] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const dispatch = useDispatch();
   const { playingTrackUri, setTrackUri } = useMusic();
+
+  
 
   const chooseTrack = async (track) => {
     setPlayingTrack(track);
@@ -47,7 +52,14 @@ export default function Dashboard({ code }) {
     if (userInfo.email) {
       dispatch(login(userInfo));
     }
-  }, [accessToken, userInfo.email]);
+    dispatch(getPlaylists()).then(() => {
+      if (playlists.length > 0) {
+        setSelectedPlaylist(playlists[0]);
+      } else if (playlists.length === 0 ) {
+        setSelectedPlaylist(null)
+      }
+    });
+  }, [accessToken, userInfo.email, dispatch]);
 
   useEffect(() => {
     if (!search) return setSearchResults([]);
@@ -79,6 +91,12 @@ export default function Dashboard({ code }) {
     return () => (cancel = true);
   }, [search, accessToken]);
 
+  const handlePlaylistChange = (e) => {
+    const selectedPlaylistId = parseInt(e.target.value, 10);
+    const playlist = playlists.find((p) => p.id === selectedPlaylistId);
+    setSelectedPlaylist(playlist);
+  };
+
   useEffect(() => {
     if (!lyricsObj.lyrics) return;
     setLyrics(lyricsObj.lyrics);
@@ -87,17 +105,34 @@ export default function Dashboard({ code }) {
 
   return sessionUser ? (
     <div>
-      <div className="search-bar">
+
+        <div className="search-bar">
         <input
           type="text"
           placeholder="Search Songs/Artists"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+          />  
+          </div>
+      
+      {playlists.length > 0 && (
+        <select onChange={handlePlaylistChange}>
+            <option value={null}>Select Playlist</option>
+            {playlists.map((playlist) => (
+              <option key={playlist.id} value={playlist.id}>
+                {playlist.title}
+              </option>
+            ))}
+          </select>
+        )}
+      {selectedPlaylist && playlists.length > 0 && (
+        <div>
+          <h4>Selected Playlist: {selectedPlaylist.title}</h4>
+        </div>
+      )}
       <div className="card-wrap">
         {searchResults.map((result) => (
-          <Card data={result} key={result.uri} chooseTrack={chooseTrack} />
+          <Card data={result} key={result.uri} chooseTrack={chooseTrack} selectedPlaylist={selectedPlaylist} setSelectedPlaylist={setSelectedPlaylist}/>
         ))}
       </div>
       {lyrics && searchResults.length <= 0 && (

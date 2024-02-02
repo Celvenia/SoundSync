@@ -40,7 +40,7 @@ export default function Profile() {
           <p> {sessionUser.email}</p>
           <strong>Spotify ID: </strong>
           <p>{sessionUser.spotify_id}</p>
-          <button onClick={(e) => handleLogout(e)}>Logout</button>
+          <button className="center" onClick={(e) => handleLogout(e)}>Logout</button>
         </div>
       )}
     </div>

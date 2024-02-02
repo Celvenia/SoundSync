@@ -40,6 +40,16 @@ a {
   text-decoration: none;
 }
 
+button {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+
 .outerWrap {
   height: 100vh;
   min-height: 100%;

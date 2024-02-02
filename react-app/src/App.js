@@ -46,7 +46,7 @@ function App() {
       <div className="outerWrap">
         {/* <Navigation isLoaded={isLoaded} /> */}
         <div className="App">
-          <SideBar />
+          <SideBar/>
           <div className="main">
             {/* <Navigation isLoaded={isLoaded} /> */}
             <Profile />
