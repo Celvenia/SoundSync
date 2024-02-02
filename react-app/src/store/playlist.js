@@ -190,7 +190,7 @@ export default function playlistReducer(state = initialState, action) {
       return newState;
     }
     case DELETE_PLAYLIST: {
-      delete newState[action.data.deleted.id];
+      delete newState[action.data.id];
       return newState;
     }
     case POST_PLAYLIST_TRACK: {

@@ -51,12 +51,13 @@ a {
   /* height: calc(100vh - 90px); */
   background: #121212;
   display: flex;
+
 }
 
 .main {
   width: 100vw;
   color: #fff;
-  height: 100vh;
+  height: 88vh;
   overflow-x: hidden;
   margin: 10px;
 }

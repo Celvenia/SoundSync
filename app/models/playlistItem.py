@@ -17,6 +17,7 @@ class PlaylistItem(db.Model):
     title = db.Column(db.String(255))
     uri = db.Column(db.String(255))
 
+
     def to_dict(self):
         return {
             'id': self.id,

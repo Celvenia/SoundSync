@@ -37,6 +37,10 @@ function App() {
     // dispatch(login(userInfo)).then(() => setIsLoaded(true));
   }, [dispatch, accessToken]);
 
+  const check = () => {
+    return code || accessToken || sessionUser
+  }
+
   return (
     <MusicProvider>
       <div className="outerWrap">
@@ -50,14 +54,14 @@ function App() {
               {/* {isLoaded && ( */}
               <Switch>
                 <Route path="/search">
-                  {code || accessToken ? (
+                  {check() ? (
                     <Dashboard code={code} />
                   ) : (
                     <LoginFormModal />
                   )}
                 </Route>
                 <Route path="/">
-                  {code || accessToken || sessionUser ? (
+                  {check() ? (
                     <Dashboard code={code} />
                   ) : (
                     <LoginFormModal />

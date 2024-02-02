@@ -4,18 +4,21 @@ from app.forms import LoginForm
 from app.forms import SignUpForm
 from flask_login import current_user, login_user, logout_user, login_required
 import os
+import requests
 
 from spotipy.oauth2 import SpotifyOAuth
 
 SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
 REDIRECT_URI = 'http://localhost:3000'
+TOKEN_URL = "https://accounts.spotify.com/api/token"
+SPOTIPY_SCOPE = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private'
 
 sp_oauth = SpotifyOAuth(
     SPOTIPY_CLIENT_ID,
     SPOTIPY_CLIENT_SECRET,
     REDIRECT_URI,
-    scope='user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private',
+    scope=SPOTIPY_SCOPE,
     cache_path='.cache'
 )
 
@@ -100,7 +103,6 @@ def sign_up():
     """
     try:
         data = request.json()
-        print(data)
         # Create a new user
         user = User(
             username=data.get('userName'),
@@ -126,22 +128,23 @@ def unauthorized():
     return {'errors': ['Unauthorized']}, 401
 
 
-@auth_routes.route('/login_spotify', methods=['POST'])
-def login_spotify():
-    code = request.json.get('code')
+# @auth_routes.route('/login_spotify', methods=['POST'])
+# def login_spotify():
+#     code = request.json.get('code')
 
-    # Get access token and other info from Spotify
-    token_info = sp_oauth.get_access_token(code)
+#     # Get access token and other info from Spotify
+#     token_info = sp_oauth.get_access_token(code)
 
-    if token_info:
-        response_data = {
-            'accessToken': token_info['access_token'],
-            'refreshToken': token_info['refresh_token'],
-            'expiresIn': token_info['expires_in']
-        }
-        # return jsonify(response_data)
-        return jsonify(token_info)
-    return '', 400
+#     if token_info:
+#         response_data = {
+#             'accessToken': token_info['access_token'],
+#             'refreshToken': token_info['refresh_token'],
+#             'expiresIn': token_info['expires_in']
+#         }
+
+#         return jsonify(response_data)
+#         # return jsonify(token_info)
+#     return '', 400
 
 
 @auth_routes.route('/refresh', methods=['POST'])
@@ -193,3 +196,36 @@ def verify_user():
 
     except Exception as e:
         return {'errors': [str(e)]}, 401
+    
+
+@auth_routes.route('/login_spotify', methods=['POST'])
+def login_spotify():
+    try:
+        code = request.json.get('code')
+
+        # Prepare data for the POST request
+        data = {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": REDIRECT_URI,
+            "client_id": SPOTIPY_CLIENT_ID,
+            "client_secret": SPOTIPY_CLIENT_SECRET,
+        }
+
+        response = requests.post(TOKEN_URL, data=data)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Parse the JSON response and return the access token
+            token_info = response.json()
+            return jsonify({
+                'accessToken': token_info['access_token'],
+                'refreshToken': token_info['refresh_token'],
+                'expiresIn': token_info['expires_in']
+            })
+
+        # If the request was not successful, return an error response
+        return jsonify({'error': 'Failed to get access token'}), response.status_code
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

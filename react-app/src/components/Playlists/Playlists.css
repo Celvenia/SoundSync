@@ -1,4 +1,7 @@
+
+
 .playlistCard {
+  position: relative;
   display: flex;
   list-style: none;
   background: #121212;
@@ -15,6 +18,18 @@
 .playlistCard:hover {
   color: #fff;
   cursor: pointer;
+}
+
+.playlistCard .deleteIcon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #b3b3b3;
+  cursor: pointer;
+}
+
+.playlistCard:hover .deleteIcon {
+  color: red;
 }
 
 .playlistCard-item {

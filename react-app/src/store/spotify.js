@@ -164,8 +164,8 @@ const initialState = {
   accessToken: null,
   refreshToken: null,
   expiresIn: null,
-  expiresAt: null,
-  scope: null,
+  // expiresAt: null,
+  // scope: null,
   error: null,
 };
 
@@ -174,11 +174,11 @@ const spotifyReducer = (state = initialState, action) => {
     case SPOTIFY_LOGIN_SUCCESS:
       return {
         ...state,
-        accessToken: action.data.access_token,
-        refreshToken: action.data.refresh_token,
-        expiresIn: action.data.expires_in,
-        expiresAt: action.data.expires_at,
-        scope: action.data.scope,
+        accessToken: action.data.accessToken,
+        refreshToken: action.data.refreshToken,
+        expiresIn: action.data.expiresIn,
+        // expiresAt: action.data.expires_at,
+        // scope: action.data.scope,
         error: null,
       };
     case SPOTIFY_LOGIN_FAILURE:

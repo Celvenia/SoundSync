@@ -48,7 +48,7 @@ def upgrade():
                               default=datetime.now),
                     sa.Column('updated_at', sa.DateTime(),
                               default=datetime.now, onupdate=datetime.now),
-                    sa.ForeignKeyConstraint(['creator_id'], ['users.id']),
+                    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
                     sa.PrimaryKeyConstraint('id')
                     )
     if environment == "production":
@@ -62,7 +62,7 @@ def upgrade():
                     sa.Column('album_url', sa.String(
                         length=255), nullable=False),
                     sa.Column('uri', sa.String(length=255), nullable=False),
-                    sa.ForeignKeyConstraint(['playlist_id'], ['playlists.id']),
+                    sa.ForeignKeyConstraint(['playlist_id'], ['playlists.id'], ondelete='CASCADE', onupdate='CASCADE'),
                     sa.PrimaryKeyConstraint('id')
                     )
     if environment == "production":

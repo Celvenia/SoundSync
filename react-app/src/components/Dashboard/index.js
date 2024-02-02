@@ -100,7 +100,13 @@ export default function Dashboard({ code }) {
           <Card data={result} key={result.uri} chooseTrack={chooseTrack} />
         ))}
       </div>
-      {lyrics && searchResults.length <= 0 && <div> {lyrics} </div>}
+      {lyrics && searchResults.length <= 0 && (
+        <div>
+          {lyrics.split(/(\[.*?\])/).map((section, index) => (
+            section.trim() && <div key={index}>{section}</div>
+          ))}
+        </div>
+      )}
       <div className="musicPlayer">
         {accessToken && (
           <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} />

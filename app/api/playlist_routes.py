@@ -25,10 +25,10 @@ def post_playlist():
     """
     data = request.get_json()
 
-    # if 'title' not in data:
-    #     return jsonify({"error": "Missing required data: title"}), 400
+    if 'title' not in data:
+        return jsonify({"error": "Missing required data: title"}), 400
 
-    title = data.get('title') or "test"
+    title = data.get('title')
 
     new_playlist = Playlist(
         creator_id=current_user.id,
@@ -68,7 +68,6 @@ def update_playlist(playlist_id):
 
     data = request.get_json()
 
-    # Update playlist fields based on your requirements
     if 'title' in data:
         playlist.title = data['title']
 
@@ -83,17 +82,28 @@ def update_playlist(playlist_id):
 # @login_required
 def delete_playlist(playlist_id):
     """
-    Delete a specific playlist
+    Delete a specific playlist and its items
     """
     playlist = Playlist.query.get(playlist_id)
 
     if not playlist:
         return jsonify({"error": "Playlist not found"}), 404
 
-    db.session.delete(playlist)
-    db.session.commit()
+    try:
+        # Delete playlist and its items
+        db.session.delete(playlist)
 
-    return jsonify({"message": "Playlist deleted successfully"}), 200
+        # Alternatively, if you want to delete items individually
+        # for item in playlist.items:
+        #     db.session.delete(item)
+
+        db.session.commit()
+
+        return jsonify(playlist.to_dict()), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
 @playlist_routes.route('/<int:playlist_id>/add_item', methods=['POST'])

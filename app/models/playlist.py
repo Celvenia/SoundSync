@@ -16,7 +16,7 @@ class Playlist(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(
         db.DateTime, default=datetime.now, onupdate=datetime.now)
-    items = db.relationship('PlaylistItem', backref='playlist', lazy=True)
+    items = db.relationship('PlaylistItem', backref='playlist', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self):
         return {

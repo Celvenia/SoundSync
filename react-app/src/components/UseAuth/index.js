@@ -14,6 +14,7 @@ export default function UseAuth(code) {
   const [expiresIn, setExpiresIn] = useState();
   const dispatch = useDispatch();
   const spotifyObj = useSelector((state) => state.spotifyReducer);
+  const sessionUser = useSelector((state) => state.session.user);
   const history = useHistory();
 
   const data = {
@@ -22,19 +23,22 @@ export default function UseAuth(code) {
 
   // responsible for initial log in
   useEffect(() => {
-    dispatch(loginSpotify(data))
-      .then((res) => {
-        if (res.data) {
-          setAccessToken(res.data.access_token);
-          setRefreshToken(res.data.refresh_token);
-          setExpiresIn(res.data.expires_in);
-          history.push("/");
-        }
-      })
-      .catch(() => {
-        history.push("/");
-      });
+  if(!sessionUser) {
 
+    dispatch(loginSpotify(data))
+    .then((res) => {
+      if (res.data) {
+        setAccessToken(res.data.accessToken);
+        setRefreshToken(res.data.refreshToken);
+        setExpiresIn(res.data.expiresIn);
+        history.push("/");
+      }
+    })
+    .catch(() => {
+      history.push("/");
+    });
+  }
+    
     return accessToken;
   }, [code]);
 
@@ -48,8 +52,8 @@ export default function UseAuth(code) {
         dispatch(refreshSpotifyToken(refreshToken))
           .then((res) => {
             if (res.data) {
-              setAccessToken(res.data.access_token);
-              setExpiresIn(res.data.expires_in);
+              setAccessToken(res.data.accessToken);
+              setExpiresIn(res.data.expiresIn);
               history.push("/");
             }
           })
