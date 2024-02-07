@@ -44,14 +44,12 @@ function App() {
   return (
     <MusicProvider>
       <div className="outerWrap">
-        {/* <Navigation isLoaded={isLoaded} /> */}
+        <Navigation isLoaded={isLoaded} />
         <div className="App">
           <SideBar/>
           <div className="main">
-            {/* <Navigation isLoaded={isLoaded} /> */}
             <Profile />
             <div className="mainContent">
-              {/* {isLoaded && ( */}
               <Switch>
                 <Route path="/search">
                   {check() ? (

@@ -5,3 +5,11 @@
 .hidden {
   display: none;
 }
+
+.navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  color: #fff;
+  height: 5vh;
+}

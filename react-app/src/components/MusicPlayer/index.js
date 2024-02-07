@@ -27,7 +27,7 @@ import "./MusicPlayer.css";
 //   ],
 // };
 
-export default function MusicPlayer({ accessToken, trackUri }) {
+export default function MusicPlayer({ accessToken, trackUri, playlistTracks, onTrackChange }) {
   const [audio, setAudio] = useState(new Audio());
   const [currentTrack, setCurrentTrack] = useState(null);
   const [play, setPlay] = useState(false);
@@ -38,15 +38,24 @@ export default function MusicPlayer({ accessToken, trackUri }) {
 
   if (!accessToken) return;
 
+
+
   return (
     <SpotifyWebPlayer
       showSaveIcon
       callback={(state) => {
         if (!state.isPlaying) setPlay(false);
+      //   const currentTrack = playlistTracks.find((track) => track.uri === state.track.uri);
+      //   if (currentTrack) {
+      //   onTrackChange(currentTrack);
+      //   console.log(currentTrack)
+      // }
+        
       }}
       play={play}
       token={accessToken}
       uris={trackUri ? [trackUri] : []}
+      // uris={playlistTracks.map((track) => track.uri)}
     />
   );
 }

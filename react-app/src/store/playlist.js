@@ -194,9 +194,6 @@ export default function playlistReducer(state = initialState, action) {
       return newState;
     }
     case POST_PLAYLIST_TRACK: {
-      // const { playlist_id } = action.data;
-      // newState[playlist_id].items.push(action.data);
-      // return newState;
       const { playlist_id } = action.data;
       const newItem = action.data;
 

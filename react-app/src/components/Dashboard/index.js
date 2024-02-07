@@ -12,6 +12,7 @@ import { useMusic } from "../../context/MusicContext";
 import { signUp, login } from "../../store/session";
 import LoginFormModal from "../LoginFormModal";
 import { getPlaylists } from "../../store/playlist";
+import { getLyrics } from "../../store/lyrics";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -29,16 +30,23 @@ export default function Dashboard({ code }) {
   const [lyrics, setLyrics] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [playingTrack, setPlayingTrack] = useState([]);
+  const [playlistTracks, setPlaylistTracks] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const { playingTrackUri, setTrackUri } = useMusic();
 
   
 
   const chooseTrack = async (track) => {
-    setPlayingTrack(track);
+    setLoading(true); 
     setSearch("");
     setLyrics("");
+    await dispatch(getLyrics(track.artist, track.title))
+    setPlayingTrack(track);
+    setPlaylistTracks((prevTracks) => [...prevTracks, track]);
+    setLoading(false); 
   };
 
   useEffect(() => {
@@ -95,13 +103,16 @@ export default function Dashboard({ code }) {
     const selectedPlaylistId = parseInt(e.target.value, 10);
     const playlist = playlists.find((p) => p.id === selectedPlaylistId);
     setSelectedPlaylist(playlist);
+    setPlaylistTracks([]);
   };
 
   useEffect(() => {
     if (!lyricsObj.lyrics) return;
     setLyrics(lyricsObj.lyrics);
     return;
-  }, [lyricsObj.lyrics]);
+  }, [lyricsObj.lyrics, playingTrack]);
+
+ 
 
   return sessionUser ? (
     <div>
@@ -131,20 +142,23 @@ export default function Dashboard({ code }) {
         </div>
       )}
       <div className="card-wrap">
-        {searchResults.map((result) => (
-          <Card data={result} key={result.uri} chooseTrack={chooseTrack} selectedPlaylist={selectedPlaylist} setSelectedPlaylist={setSelectedPlaylist}/>
+        {!loading && searchResults.map((result) => (
+          <Card data={result} key={result.uri} chooseTrack={chooseTrack} selectedPlaylist={selectedPlaylist} setSelectedPlaylist={setSelectedPlaylist} loading={loading}/>
         ))}
       </div>
-      {lyrics && searchResults.length <= 0 && (
+      {lyrics && searchResults.length <= 0 && !loading && (
         <div>
           {lyrics.split(/(\[.*?\])/).map((section, index) => (
             section.trim() && <div key={index}>{section}</div>
           ))}
         </div>
       )}
+      {loading && (
+        <div>Loading Lyrics</div>
+      )}
       <div className="musicPlayer">
         {accessToken && (
-          <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} />
+          <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} playlistTracks={playlistTracks} onTrackChange={(track) => chooseTrack(track)}/>
         )}
       </div>
     </div>

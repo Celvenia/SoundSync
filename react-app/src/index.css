@@ -4,15 +4,9 @@ body {
   background-color: #000;
 }
 
-/* TODO Add site wide styles */
-/* 
-grey dark - #040404
-grey - #131313  
-light grey - #282828 
-white -  #fff*/
 
 html {
-  background: #000000;
+  background: #000;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -27,7 +21,6 @@ body {
   box-sizing: border-box;
   --webkit-font-smoothing: antialiased;
   --mos-osx-font-smoothing: grayscale;
-  /* color: #fff; */
 }
 
 a {
@@ -53,23 +46,23 @@ button {
 .outerWrap {
   height: 100vh;
   min-height: 100%;
-  background: lightgrey;
-  /* background: #040404; */
 }
 
 .App {
-  /* height: calc(100vh - 90px); */
   background: #121212;
   display: flex;
-
 }
 
 .main {
   width: 100vw;
   color: #fff;
-  height: 88vh;
+  height: 85vh;
   overflow-x: hidden;
-  margin: 10px;
+  margin: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
+  background: #121212;
 }
 
 .main h2 {
@@ -77,7 +70,10 @@ button {
 }
 
 .mainContent {
-  margin-top: 80px;
+  margin-top: 2%;
+  margin-bottom: 80px;
+  border-radius: 20px;
+
 }
 
 .content {

@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
   faMagnifyingGlass,
-  faBook,
   faPlus,
-  faX
+  faX,
+  faPen
 } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom/cjs/react-router-dom";
 import Dropdown from "../Dropdown";
@@ -13,10 +13,11 @@ import Dropdown from "../Dropdown";
 import "./SideBar.css";
 import { useDispatch, useSelector } from "react-redux";
 import Playlists from "../Playlists";
-import { deletePlaylist, getPlaylists, postPlaylist } from "../../store/playlist";
+import { deletePlaylist, getPlaylists, postPlaylist, updatePlaylist } from "../../store/playlist";
 
 export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
   const [expandedPlaylists, setExpandedPlaylists] = useState([]);
+  const [editMode, setEditMode] = useState(null); // Add state for edit mode
   const playlistsObj = useSelector((state) => state.playlistReducer);
   const playlists = Object.values(playlistsObj);
   const sessionUser = useSelector((state) => state.session.user);
@@ -44,10 +45,22 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
     dispatch(postPlaylist(data));
   };
 
-   const handleDeletePlaylist = (e, playlist) => {
+  const handleDeletePlaylist = (e, playlist) => {
     e.stopPropagation();
     dispatch(deletePlaylist(playlist.id))
-   } 
+  } 
+
+  const handleEditPlaylist = (e, playlist) => {
+    e.stopPropagation();
+    setEditMode(playlist.id); // Set the edit mode for the clicked playlist
+  } 
+
+  const handleUpdatePlaylist = (e, playlist) => {
+    e.preventDefault();
+    const updatedTitle = e.target.elements.playlistTitle.value;
+    dispatch(updatePlaylist({ id: playlist.id, title: updatedTitle }));
+    setEditMode(null); // Exit edit mode after updating the playlist
+  }
 
   const togglePlaylist = (playlistId) => {
     setExpandedPlaylists((prevExpanded) =>
@@ -59,7 +72,7 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
 
   return (
     <div className={accessToken ? "sideBar" : "sideBarLong"}>
-      <ul className="sideTop">
+            <ul className="sideTop">
       <li className="logo">
           <img src={logo}></img>
         </li>
@@ -88,18 +101,35 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
       </ul>
       {sessionUser && accessToken && (
         <div>
-          {playlists.reverse().map((playlist) => (
+          {playlists.map((playlist) => (
             <div
               key={playlist.id}
               className={`playlistCard ${
                 expandedPlaylists.includes(playlist.id) ? "expanded" : ""
-              }`}
+              } ${editMode === playlist.id ? "editMode" : ""}`} // Add editMode class
               onClick={() => togglePlaylist(playlist.id)}
             >
-              <div className="playlistTitle" title="see playlist songs">
-                {playlist.title}
-              </div>
-              <div className="deleteIconContainer">
+              {editMode === playlist.id ? ( // Show edit form in edit mode
+                <form onSubmit={(e) => handleUpdatePlaylist(e, playlist)}>
+                  <input
+                    type="text"
+                    name="playlistTitle"
+                    defaultValue={playlist.title}
+                  />
+                  <button type="submit">Update</button>
+                </form>
+              ) : (
+                <div className="playlistTitle" title="see playlist songs">
+                  {playlist.title}
+                </div>
+              )}
+              <div className="iconContainer">
+                <FontAwesomeIcon 
+                  icon={faPen}
+                  className="editIcon"
+                  title="edit playlist"
+                  onClick={(e) => handleEditPlaylist(e, playlist)}
+                />
                 <FontAwesomeIcon
                   icon={faX}
                   className="deleteIcon"
