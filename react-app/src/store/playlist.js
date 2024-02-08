@@ -5,6 +5,7 @@ const UPDATE_PLAYLIST = "playlist/UPDATE_PLAYLIST";
 const POST_PLAYLIST = "playlist/POST_PLAYLIST";
 const DELETE_PLAYLIST = "playlist/DELETE_PLAYLIST";
 const POST_PLAYLIST_TRACK = "playlist/POST_PLAYLIST_TRACK";
+const DELETE_PLAYLIST_TRACK = "playlist/DELETE_PLAYLIST_TRACK";
 
 // action creators - define actions (objects with type/data)
 const getPlaylistAC = (data) => ({
@@ -36,6 +37,12 @@ const postPlaylistTrackAC = (data) => ({
   type: POST_PLAYLIST_TRACK,
   data,
 });
+
+const deletePlaylistTrackAC = (data) => ({
+  type: DELETE_PLAYLIST_TRACK,
+  data,
+});
+
 
 // thunk action creators - for asynchronous code, i.e., fetch calls prior to dispatching action creators
 export const getPlaylist = (id) => async (dispatch) => {
@@ -164,6 +171,27 @@ export const postPlaylistTrack =
     }
   };
 
+  export const deletePlaylistTrack =
+  (playlistId, trackId) => async (dispatch) => {
+    const response = await fetch(`/api/playlists/${playlistId}/remove_item/${trackId}`, {
+      method: "DELETE"
+    });
+
+
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(deletePlaylistTrackAC(data));
+      return data;
+    } else if (response.status < 500) {
+      const data = await response.json();
+      if (data.errors) {
+        return data.errors;
+      }
+    } else {
+      return ["An error occurred. Please try again."];
+    }
+  };
+
 // state
 const initialState = {};
 
@@ -200,12 +228,23 @@ export default function playlistReducer(state = initialState, action) {
       const isDuplicate = state[playlist_id].items.some(item => item.id === newItem.id);
 
       if (!isDuplicate) {
-        const newState = { ...state };
         newState[playlist_id].items.push(newItem);
         return newState;
       }
       console.warn('Duplicate item found. Not adding to the playlist.');
       return state;
+    }
+    case DELETE_PLAYLIST_TRACK: {
+      const { playlist_id } = action.data;
+      const trackToDelete = action.data
+      const playlist = newState[playlist_id];
+      const updatedItems = playlist.items.filter(item => item.id !== trackToDelete.id);
+
+      newState[playlist_id] = {
+        ...playlist,
+        items: updatedItems,
+      };
+    return newState
     }
     default:
       return state;

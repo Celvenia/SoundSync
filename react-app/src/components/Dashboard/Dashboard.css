@@ -29,6 +29,27 @@
   flex-wrap: wrap;
 }
 
+.selected-playlist-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.selected-playlist-button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.selected-playlist-container button {
+  padding: 1%; 
+  margin: 0;
+  height: 40px;
+}
+.selected-playlist-container button:hover {
+  background-color: #f2f2f2;
+  color: #000;
+}
+
 input[type="text"]::-webkit-input-placeholder {
   color: #888;
 }

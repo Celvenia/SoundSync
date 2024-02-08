@@ -151,3 +151,26 @@ def add_playlist_item(playlist_id):
     db.session.commit()
 
     return jsonify(new_playlist_item.to_dict()), 201
+
+
+
+@playlist_routes.route('/<int:playlist_id>/remove_item/<int:item_id>', methods=['DELETE'])
+# @login_required
+def remove_playlist_item(playlist_id, item_id):
+    """
+    Remove a PlaylistItem from a specific playlist
+    """
+    playlist = Playlist.query.get(playlist_id)
+
+    if not playlist:
+        return jsonify({"error": "Playlist not found"}), 404
+
+    playlist_item = PlaylistItem.query.get(item_id)
+
+    if not playlist_item or playlist_item.playlist_id != playlist_id:
+        return jsonify({"error": "Playlist item not found"}), 404
+
+    db.session.delete(playlist_item)
+    db.session.commit()
+
+    return jsonify(playlist_item.to_dict()), 200

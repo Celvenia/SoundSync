@@ -52,14 +52,15 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
 
   const handleEditPlaylist = (e, playlist) => {
     e.stopPropagation();
-    setEditMode(playlist.id); // Set the edit mode for the clicked playlist
+
+      setEditMode(playlist.id);
   } 
 
   const handleUpdatePlaylist = (e, playlist) => {
     e.preventDefault();
     const updatedTitle = e.target.elements.playlistTitle.value;
     dispatch(updatePlaylist({ id: playlist.id, title: updatedTitle }));
-    setEditMode(null); // Exit edit mode after updating the playlist
+    setEditMode(null);
   }
 
   const togglePlaylist = (playlistId) => {
@@ -106,10 +107,10 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
               key={playlist.id}
               className={`playlistCard ${
                 expandedPlaylists.includes(playlist.id) ? "expanded" : ""
-              } ${editMode === playlist.id ? "editMode" : ""}`} // Add editMode class
+              } ${editMode === playlist.id ? "editMode" : ""}`}
               onClick={() => togglePlaylist(playlist.id)}
             >
-              {editMode === playlist.id ? ( // Show edit form in edit mode
+              {editMode === playlist.id ? (
                 <form onSubmit={(e) => handleUpdatePlaylist(e, playlist)}>
                   <input
                     type="text"
@@ -117,6 +118,7 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
                     defaultValue={playlist.title}
                   />
                   <button type="submit">Update</button>
+                  <button type="button" onClick={() =>setEditMode(null)}>Cancel</button>
                 </form>
               ) : (
                 <div className="playlistTitle" title="see playlist songs">

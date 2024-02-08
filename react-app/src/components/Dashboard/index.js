@@ -11,8 +11,14 @@ import { useMusic } from "../../context/MusicContext";
 
 import { signUp, login } from "../../store/session";
 import LoginFormModal from "../LoginFormModal";
-import { getPlaylists } from "../../store/playlist";
+import { deletePlaylistTrack, getPlaylists, postPlaylistTrack } from "../../store/playlist";
 import { getLyrics } from "../../store/lyrics";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlus,
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
+import { deletePlaylistTracks } from "../../store/spotifyPlaylists";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -48,6 +54,31 @@ export default function Dashboard({ code }) {
     setPlaylistTracks((prevTracks) => [...prevTracks, track]);
     setLoading(false); 
   };
+
+  const handleAddSong = async (playlistId, trackData) => {
+    await dispatch(postPlaylistTrack(playlistId, trackData))
+    return;
+  }
+
+  const handleRemoveSong = async (playlistId, trackData) => {
+    const playlistItems = playlistsObj[playlistId].items;
+
+    const matchingItem = playlistItems.find((item) => (
+      item.artist === trackData.artist &&
+      item.title === trackData.title &&
+      item.uri === trackData.uri &&
+      item.album_url === trackData.albumUrl
+    ));
+  
+    if (matchingItem) {
+
+      await dispatch(deletePlaylistTrack(playlistId, matchingItem.id));
+
+    } else {
+      console.warn("No matching playlist item found");
+    }
+  };
+  
 
   useEffect(() => {
     if (!playingTrack) return;
@@ -136,9 +167,14 @@ export default function Dashboard({ code }) {
             ))}
           </select>
         )}
-      {selectedPlaylist && playlists.length > 0 && (
-        <div>
+      {selectedPlaylist && playlists.length > 0 && playlistsObj[selectedPlaylist.id] && (
+        <div className="selected-playlist-container">
           <h4>Selected Playlist: {selectedPlaylist.title}</h4>
+          {lyrics !== "" && (
+          <div className="selected-playlist-button-container">
+            <button onClick={() => handleAddSong(selectedPlaylist.id, playingTrack)}>Add Song To {selectedPlaylist.title}</button>
+            <button onClick={() => handleRemoveSong(selectedPlaylist.id, playingTrack)}>Remove Song From Playlist</button>
+            </div>)}
         </div>
       )}
       <div className="card-wrap">
