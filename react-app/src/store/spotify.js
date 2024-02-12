@@ -136,24 +136,26 @@ export const getUserInfo = (accessToken) => {
 
 export const spotifyLogout = () => {
   return async (dispatch) => {
-    //   try {
-    //     const response = await fetch("/api/auth/logout", {
-    //       method: "POST",
-    //     });
+      try {
+        const response = await fetch("/api/auth/logout", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-    //     if (response.ok) {
-    //       dispatch(spotifyLogout());
-    //     } else {
-    //       // Handle logout failure
-    //       const errorData = await response.json();
-    //       console.error("Logout failed:", errorData);
-    //     }
-    //   } catch (error) {
-    //     console.error("Logout error:", error);
-    //   }
-    // };
-    dispatch(spotifyLogoutAC());
-  };
+        if (response.ok) {
+          dispatch(spotifyLogoutAC());
+        } else {
+          // Handle logout failure
+          const errorData = await response.json();
+          console.error("Logout failed:", errorData);
+        }
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+    };
+    // dispatch(spotifyLogoutAC());
+  // };
 };
 
 // authReducer.js

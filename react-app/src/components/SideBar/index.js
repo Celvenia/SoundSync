@@ -17,7 +17,7 @@ import { deletePlaylist, getPlaylists, postPlaylist, updatePlaylist } from "../.
 
 export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
   const [expandedPlaylists, setExpandedPlaylists] = useState([]);
-  const [editMode, setEditMode] = useState(null); // Add state for edit mode
+  const [editMode, setEditMode] = useState(null);
   const playlistsObj = useSelector((state) => state.playlistReducer);
   const playlists = Object.values(playlistsObj);
   const sessionUser = useSelector((state) => state.session.user);
@@ -31,8 +31,8 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
   }, [dispatch, sessionUser]);
 
   const logo =
-    "https://res.cloudinary.com/dtzv3fsas/image/upload/v1683932465/SpotifyClone/Spotify_Logo_RGB_White_etpfol.png";
-
+    "https://res.cloudinary.com/dtzv3fsas/image/upload/v1707388987/SoundSync/SoundSyncName_g2ioy9.png"
+    
   const handlePostPlaylistClick = () => {
     if (!sessionUser)  {
       alert("Log in to create a playlist")
@@ -59,6 +59,8 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
   const handleUpdatePlaylist = (e, playlist) => {
     e.preventDefault();
     const updatedTitle = e.target.elements.playlistTitle.value;
+    if (updatedTitle === "") return;
+    if (playlist.title === updatedTitle) return;
     dispatch(updatePlaylist({ id: playlist.id, title: updatedTitle }));
     setEditMode(null);
   }
@@ -77,22 +79,22 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
       <li className="logo">
           <img src={logo}></img>
         </li>
-        <li>
+        {/* <li>
           <NavLink exact to="/">
             <FontAwesomeIcon icon={faHome} />
           </NavLink>
           <NavLink exact to="/">
             Home
           </NavLink>
-        </li>
-        <li>
+        </li> */}
+        {/* <li>
           <NavLink exact to="/search">
             <FontAwesomeIcon icon={faMagnifyingGlass} />
           </NavLink>
           <NavLink exact to="/search">
             Search
           </NavLink>
-        </li>
+        </li> */}
       </ul>
       <ul className="sideBottom">
         <li className="library" onClick={handlePostPlaylistClick}>
@@ -111,11 +113,13 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
               onClick={() => togglePlaylist(playlist.id)}
             >
               {editMode === playlist.id ? (
-                <form onSubmit={(e) => handleUpdatePlaylist(e, playlist)}>
+                <form className="edit-playlist-title" onSubmit={(e) => handleUpdatePlaylist(e, playlist)}>
                   <input
                     type="text"
                     name="playlistTitle"
+                    placeholder="Title cannot be blank"
                     defaultValue={playlist.title}
+                    maxLength={25}
                   />
                   <button type="submit">Update</button>
                   <button type="button" onClick={() =>setEditMode(null)}>Cancel</button>
@@ -125,13 +129,15 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
                   {playlist.title}
                 </div>
               )}
-              <div className="iconContainer">
+             {!editMode && (
+
+               <div className="iconContainer">
                 <FontAwesomeIcon 
                   icon={faPen}
                   className="editIcon"
                   title="edit playlist"
                   onClick={(e) => handleEditPlaylist(e, playlist)}
-                />
+                  />
                 <FontAwesomeIcon
                   icon={faX}
                   className="deleteIcon"
@@ -139,8 +145,9 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
                   onClick={(e) => {
                     handleDeletePlaylist(e, playlist);
                   }}
-                />
-              </div>
+                  />
+                  
+              </div>)}
               {expandedPlaylists.includes(playlist.id) && (
                 <div className="playlistSongs">
                   {playlist.items.length > 0 ? playlist.items.map((song) => (

@@ -10,6 +10,7 @@ import SpotifyWebPlayer, {
   TYPE,
 } from "react-spotify-web-playback";
 import "./MusicPlayer.css";
+import { useDispatch, useSelector } from "react-redux";
 
 // const baseURIs = {
 //   album: "spotify:album:5GzhTq1Iu7jioZquau8f93",
@@ -27,35 +28,61 @@ import "./MusicPlayer.css";
 //   ],
 // };
 
-export default function MusicPlayer({ accessToken, trackUri, playlistTracks, onTrackChange }) {
-  const [audio, setAudio] = useState(new Audio());
-  const [currentTrack, setCurrentTrack] = useState(null);
+export default function MusicPlayer({ accessToken, trackUri, queuedPlaylist}) {
+  const playlistsObj = useSelector((state) => state.playlistReducer);
+  const dispatch = useDispatch()
   const [play, setPlay] = useState(false);
+  const [playing, setPlaying] = useState([])
+  const [tracks, setTracks] = useState([]);
 
   useEffect(() => {
-    setPlay(true);
-  }, [trackUri]);
+    if (trackUri && queuedPlaylist) {
+      const uris = playlistsObj[queuedPlaylist.id].items.map((item) => item.uri)
+      uris.unshift(trackUri)
+      setTracks(uris)
+      setPlay(true)
+    } else if (trackUri && !queuedPlaylist) {
+      setPlaying([trackUri])
+      setTracks([])
+      setPlay(true);
+    }
+  }, [trackUri, queuedPlaylist]);
+
+  useEffect(() => {
+    if (queuedPlaylist) {
+      const uris = playlistsObj[queuedPlaylist.id].items.map((item) => item.uri)
+      setPlaying([])
+      setTracks(uris)
+      setPlay(true)
+    }
+    
+  }, [queuedPlaylist, playlistsObj]);
+
+
+  
+  // useEffect(() => {
+  //   setPlay(tracks.length > 0);
+  // }, [playing, tracks]);
 
   if (!accessToken) return;
 
-
+  // console.log(playing, 'playing!!')
+  // console.log(queuedPlaylist, 'queued!!!')
+  // if(queuedPlaylist) {
+  //   console.log(playlistsObj[queuedPlaylist.id].items, 'playlist?!!!')
+  // }
+  // console.log(tracks, 'tracks!!')
 
   return (
     <SpotifyWebPlayer
       showSaveIcon
       callback={(state) => {
         if (!state.isPlaying) setPlay(false);
-      //   const currentTrack = playlistTracks.find((track) => track.uri === state.track.uri);
-      //   if (currentTrack) {
-      //   onTrackChange(currentTrack);
-      //   console.log(currentTrack)
-      // }
         
       }}
       play={play}
       token={accessToken}
-      uris={trackUri ? [trackUri] : []}
-      // uris={playlistTracks.map((track) => track.uri)}
+      uris={playing.length > 0 ? playing : tracks}
     />
   );
 }

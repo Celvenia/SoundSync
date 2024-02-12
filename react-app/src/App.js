@@ -51,13 +51,13 @@ function App() {
             <Profile />
             <div className="mainContent">
               <Switch>
-                <Route path="/search">
+                {/* <Route path="/search">
                   {check() ? (
                     <Dashboard code={code} />
                   ) : (
                     <LoginFormModal />
                   )}
-                </Route>
+                </Route> */}
                 <Route path="/">
                   {check() ? (
                     <Dashboard code={code} />

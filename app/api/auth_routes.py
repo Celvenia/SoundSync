@@ -69,10 +69,6 @@ def logout():
     """
     Logs a user out
     """
-
-    # session.pop('spotify_access_token', None)
-    # session.pop('spotify_refresh_token', None)
-    # session.pop('spotify_expires_at', None)
     logout_user()
     return {'message': 'User logged out'}
 
@@ -175,15 +171,12 @@ def verify_user():
     """
     try:
         data = request.json
-        # Check if the user exists in the database based on the received data
         user = User.query.filter_by(spotify_id=data.get('id')).first()
 
         if user:
-            # User exists, log in the user
             login_user(user)
             return user.to_dict()
         else:
-            # User does not exist, create a new user
             new_user = User(
                 username=data.get('display_name'),
                 email=data.get('email'),
@@ -203,7 +196,6 @@ def login_spotify():
     try:
         code = request.json.get('code')
 
-        # Prepare data for the POST request
         data = {
             "grant_type": "authorization_code",
             "code": code,
@@ -214,9 +206,7 @@ def login_spotify():
 
         response = requests.post(TOKEN_URL, data=data)
 
-        # Check if the request was successful (status code 200)
         if response.status_code == 200:
-            # Parse the JSON response and return the access token
             token_info = response.json()
             return jsonify({
                 'accessToken': token_info['access_token'],
@@ -224,7 +214,6 @@ def login_spotify():
                 'expiresIn': token_info['expires_in']
             })
 
-        # If the request was not successful, return an error response
         return jsonify({'error': 'Failed to get access token'}), response.status_code
 
     except Exception as e:

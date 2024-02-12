@@ -35,9 +35,9 @@ export default function Dashboard({ code }) {
   const [search, setSearch] = useState("");
   const [lyrics, setLyrics] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [playingTrack, setPlayingTrack] = useState([]);
-  const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [playingTrack, setPlayingTrack] = useState({});
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [queuedPlaylist, setQueuedPlaylist] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -51,12 +51,27 @@ export default function Dashboard({ code }) {
     setLyrics("");
     await dispatch(getLyrics(track.artist, track.title))
     setPlayingTrack(track);
-    setPlaylistTracks((prevTracks) => [...prevTracks, track]);
     setLoading(false); 
   };
 
   const handleAddSong = async (playlistId, trackData) => {
-    await dispatch(postPlaylistTrack(playlistId, trackData))
+    const playlistItems = playlistsObj[playlistId].items;
+
+    const matchingItem = playlistItems.find((item) => (
+      item.artist === trackData.artist &&
+      item.title === trackData.title &&
+      item.uri === trackData.uri &&
+      item.album_url === trackData.albumUrl
+    ));
+
+    if (!matchingItem) {
+      await dispatch(postPlaylistTrack(playlistId, trackData))
+
+    } else {
+      console.warn("Duplicate playlist item found");
+    }
+  
+   
     return;
   }
 
@@ -90,14 +105,9 @@ export default function Dashboard({ code }) {
     dispatch(getUserInfo(accessToken));
     if (userInfo.email) {
       dispatch(login(userInfo));
+      dispatch(getPlaylists())
     }
-    dispatch(getPlaylists()).then(() => {
-      if (playlists.length > 0) {
-        setSelectedPlaylist(playlists[0]);
-      } else if (playlists.length === 0 ) {
-        setSelectedPlaylist(null)
-      }
-    });
+    
   }, [accessToken, userInfo.email, dispatch]);
 
   useEffect(() => {
@@ -130,11 +140,17 @@ export default function Dashboard({ code }) {
     return () => (cancel = true);
   }, [search, accessToken]);
 
-  const handlePlaylistChange = (e) => {
+  const handlePlaylistSelect = (e) => {
     const selectedPlaylistId = parseInt(e.target.value, 10);
     const playlist = playlists.find((p) => p.id === selectedPlaylistId);
     setSelectedPlaylist(playlist);
-    setPlaylistTracks([]);
+  };
+
+  const handlePlaylistQueue = (e) => {
+    const selectedPlaylistId = parseInt(e.target.value, 10);
+    const playlist = playlists.find((p) => p.id === selectedPlaylistId);
+    setQueuedPlaylist(playlist);
+
   };
 
   useEffect(() => {
@@ -143,7 +159,7 @@ export default function Dashboard({ code }) {
     return;
   }, [lyricsObj.lyrics, playingTrack]);
 
- 
+// console.log(playingTrack)
 
   return sessionUser ? (
     <div>
@@ -158,8 +174,19 @@ export default function Dashboard({ code }) {
           </div>
       
       {playlists.length > 0 && (
-        <select onChange={handlePlaylistChange}>
-            <option value={null}>Select Playlist</option>
+        <select onChange={handlePlaylistSelect}>
+            <option value={null}>Select Playlist To Edit</option>
+            {playlists.map((playlist) => (
+              <option key={playlist.id} value={playlist.id}>
+                {playlist.title}
+              </option>
+            ))}
+          </select>
+        )}
+
+{playlists.length > 0 && (
+        <select onChange={handlePlaylistQueue}>
+            <option value={null}>Queue Playlist</option>
             {playlists.map((playlist) => (
               <option key={playlist.id} value={playlist.id}>
                 {playlist.title}
@@ -169,32 +196,55 @@ export default function Dashboard({ code }) {
         )}
       {selectedPlaylist && playlists.length > 0 && playlistsObj[selectedPlaylist.id] && (
         <div className="selected-playlist-container">
-          <h4>Selected Playlist: {selectedPlaylist.title}</h4>
-          {lyrics !== "" && (
-          <div className="selected-playlist-button-container">
-            <button onClick={() => handleAddSong(selectedPlaylist.id, playingTrack)}>Add Song To {selectedPlaylist.title}</button>
-            <button onClick={() => handleRemoveSong(selectedPlaylist.id, playingTrack)}>Remove Song From Playlist</button>
-            </div>)}
+          <h4>Selected Playlist: <p> { playlistsObj[selectedPlaylist.id].title}
+            </p> 
+            </h4>
+          {lyrics !== "" && playingTrack.title && (
+            <>
+            <p>Last Searched: 
+              <p>
+              {playingTrack.title} by {playingTrack.artist}
+              </p>
+              </p>
+              <div className="selected-playlist-button-container">
+            <button onClick={() => handleAddSong(selectedPlaylist.id, playingTrack)}>Add Searched To Playlist</button>
+            <button onClick={() => handleRemoveSong(selectedPlaylist.id, playingTrack)}>Remove Searched From Playlist</button>
+            </div>
+            </>
+            )}
         </div>
       )}
+      
       <div className="card-wrap">
         {!loading && searchResults.map((result) => (
           <Card data={result} key={result.uri} chooseTrack={chooseTrack} selectedPlaylist={selectedPlaylist} setSelectedPlaylist={setSelectedPlaylist} loading={loading}/>
         ))}
       </div>
-      {lyrics && searchResults.length <= 0 && !loading && (
+
+      {queuedPlaylist && (
+  <div>
+    <h5>{playlistsObj[queuedPlaylist.id].title}</h5>
+    {playlistsObj[queuedPlaylist.id].items.map((item, i) => (
+      <div key={i + 1}>
+        {i + 1}: {item.title} by {item.artist}
+      </div>
+    ))}
+  </div>
+)}
+
+      {lyrics && searchResults.length <= 0 && !loading && !queuedPlaylist && (
         <div>
           {lyrics.split(/(\[.*?\])/).map((section, index) => (
             section.trim() && <div key={index}>{section}</div>
           ))}
         </div>
       )}
-      {loading && (
+      {loading && !queuedPlaylist && (
         <div>Loading Lyrics</div>
       )}
       <div className="musicPlayer">
         {accessToken && (
-          <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} playlistTracks={playlistTracks} onTrackChange={(track) => chooseTrack(track)}/>
+          <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} queuedPlaylist={queuedPlaylist}/>
         )}
       </div>
     </div>
