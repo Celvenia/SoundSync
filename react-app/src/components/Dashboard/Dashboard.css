@@ -45,9 +45,15 @@
   margin: 0;
   height: 40px;
 }
+
 .selected-playlist-container button:hover {
   background-color: #f2f2f2;
   color: #000;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
 }
 
 input[type="text"]::-webkit-input-placeholder {

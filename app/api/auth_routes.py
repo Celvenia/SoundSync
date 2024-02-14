@@ -12,7 +12,7 @@ SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
 REDIRECT_URI = 'http://localhost:3000'
 TOKEN_URL = "https://accounts.spotify.com/api/token"
-SPOTIPY_SCOPE = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private'
+SPOTIPY_SCOPE = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-read'
 
 sp_oauth = SpotifyOAuth(
     SPOTIPY_CLIENT_ID,

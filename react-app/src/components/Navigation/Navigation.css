@@ -9,7 +9,18 @@
 .navigation {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
+  align-items: center; 
   color: #fff;
   height: 5vh;
+}
+
+.navigation li {
+  display: flex;
+  align-items: center;
+}
+
+.navigation li img {
+  max-height: 100%; 
+  max-width: 100%; 
 }

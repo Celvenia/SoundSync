@@ -7,7 +7,7 @@ import { spotifyLogout } from "../../store/spotify";
 export default function Profile() {
   const userInfo = useSelector((state) => state.spotifyReducer);
   const sessionUser = useSelector((state) => state.session.user);
-  // const { spotify_id, email, username } = sessionUser;
+
   const dispatch = useDispatch();
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -20,18 +20,17 @@ export default function Profile() {
     e.preventDefault();
     dispatch(spotifyLogout());
     dispatch(logout());
-    // dispatch(spotifyLogout());
   };
 
   return (
     <div className="profile-container">
-      <button
+      { sessionUser && <button
         className="profile-button"
         title="Show Profile"
         onClick={toggleDropdown}
       >
         Profile
-      </button>
+      </button>}
       {dropdownVisible && sessionUser && (
         <div className="dropdown">
           <strong>Display Name:</strong>

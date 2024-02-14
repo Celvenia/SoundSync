@@ -1,0 +1,35 @@
+.socials-container {
+    position: absolute;
+    top: 0;
+    right: 80px;
+    margin: 10px;
+  }
+  
+  .socials-button {
+    cursor: pointer;
+  }
+  
+  .dropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+  }
+
+  .dropdown a {
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  .dropdown a:hover {
+    border: 2px solid #000;
+  }

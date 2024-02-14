@@ -135,7 +135,7 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
                 <FontAwesomeIcon 
                   icon={faPen}
                   className="editIcon"
-                  title="edit playlist"
+                  title="edit playlist's title"
                   onClick={(e) => handleEditPlaylist(e, playlist)}
                   />
                 <FontAwesomeIcon

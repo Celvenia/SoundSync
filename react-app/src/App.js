@@ -20,6 +20,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import LoginFormModal from "./components/LoginFormModal";
 import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
+import Socials from "./components/Socials";
 import { MusicProvider } from "./context/MusicContext";
 
 const code = new URLSearchParams(window.location.search).get("code");
@@ -48,7 +49,7 @@ function App() {
         <div className="App">
           <SideBar/>
           <div className="main">
-            <Profile />
+
             <div className="mainContent">
               <Switch>
                 {/* <Route path="/search">

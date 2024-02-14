@@ -1,7 +1,8 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ProfileButton from "./ProfileButton";
+import Socials from "../Socials";
+import Profile from "../Profile";
 import "./Navigation.css";
 
 function Navigation({ isLoaded }) {
@@ -11,13 +12,17 @@ function Navigation({ isLoaded }) {
     <ul className="navigation">
       {/* {isLoaded && (
         <li>
+          <Socials />
+        </li>
+      )}
+
+      {isLoaded && (
+        <li>
           <ProfileButton user={sessionUser} />
         </li>
       )} */}
-      <li>Hello</li>
-      <li>Hello</li>
-      <li>Hello</li>
-      <li>Hello</li>
+                  <Socials />
+            <Profile />
     </ul>
   );
 }

@@ -101,10 +101,12 @@ export const getUserInfo = (accessToken) => {
         },
       });
 
+      
       if (response.ok) {
         const userInfo = await response.json();
 
         // Send user data to the backend for verification and seeding
+
         const backendResponse = await fetch("/api/auth/verify_user", {
           method: "POST",
           headers: {
@@ -124,6 +126,7 @@ export const getUserInfo = (accessToken) => {
           return data;
         }
       } else {
+        console.log(response)
         const errorData = await response.json();
         let data = dispatch(spotifyUserFailure(errorData));
         return data;

@@ -43,7 +43,7 @@ export default function Dashboard({ code }) {
   const dispatch = useDispatch();
   const { playingTrackUri, setTrackUri } = useMusic();
 
-  
+  //FUNCTIONS
 
   const chooseTrack = async (track) => {
     setLoading(true); 
@@ -53,6 +53,17 @@ export default function Dashboard({ code }) {
     setPlayingTrack(track);
     setLoading(false); 
   };
+
+  const findMatchingItem = (playlistId, trackData) => {
+    const playlistItems = playlistsObj[playlistId].items;
+
+    return playlistItems.some((item) => (
+      item.artist === trackData.artist &&
+      item.title === trackData.title &&
+      item.uri === trackData.uri
+    ));
+
+  }
 
   const handleAddSong = async (playlistId, trackData) => {
     const playlistItems = playlistsObj[playlistId].items;
@@ -76,13 +87,13 @@ export default function Dashboard({ code }) {
   }
 
   const handleRemoveSong = async (playlistId, trackData) => {
+
     const playlistItems = playlistsObj[playlistId].items;
 
     const matchingItem = playlistItems.find((item) => (
       item.artist === trackData.artist &&
       item.title === trackData.title &&
-      item.uri === trackData.uri &&
-      item.album_url === trackData.albumUrl
+      item.uri === trackData.uri 
     ));
   
     if (matchingItem) {
@@ -94,6 +105,20 @@ export default function Dashboard({ code }) {
     }
   };
   
+  const handlePlaylistSelect = (e) => {
+    const selectedPlaylistId = parseInt(e.target.value, 10);
+    const playlist = playlists.find((p) => p.id === selectedPlaylistId);
+    setSelectedPlaylist(playlist);
+  };
+
+  const handlePlaylistQueue = (e) => {
+    const selectedPlaylistId = parseInt(e.target.value, 10);
+    const playlist = playlists.find((p) => p.id === selectedPlaylistId);
+    setQueuedPlaylist(playlist);
+
+  };
+
+  // USE EFFECTS
 
   useEffect(() => {
     if (!playingTrack) return;
@@ -111,10 +136,13 @@ export default function Dashboard({ code }) {
   }, [accessToken, userInfo.email, dispatch]);
 
   useEffect(() => {
-    if (!search) return setSearchResults([]);
-    if (!accessToken) return;
-
+    if (!search.trim() || !accessToken) {
+      setSearchResults([]);
+      return;
+    }
+    
     let cancel = false;
+
 
     spotifyApi.searchTracks(search).then((res) => {
       if (cancel) return;
@@ -140,18 +168,6 @@ export default function Dashboard({ code }) {
     return () => (cancel = true);
   }, [search, accessToken]);
 
-  const handlePlaylistSelect = (e) => {
-    const selectedPlaylistId = parseInt(e.target.value, 10);
-    const playlist = playlists.find((p) => p.id === selectedPlaylistId);
-    setSelectedPlaylist(playlist);
-  };
-
-  const handlePlaylistQueue = (e) => {
-    const selectedPlaylistId = parseInt(e.target.value, 10);
-    const playlist = playlists.find((p) => p.id === selectedPlaylistId);
-    setQueuedPlaylist(playlist);
-
-  };
 
   useEffect(() => {
     if (!lyricsObj.lyrics) return;
@@ -159,8 +175,8 @@ export default function Dashboard({ code }) {
     return;
   }, [lyricsObj.lyrics, playingTrack]);
 
-// console.log(playingTrack)
 
+  // RETURN 
   return sessionUser ? (
     <div>
 
@@ -201,18 +217,21 @@ export default function Dashboard({ code }) {
             </h4>
           {lyrics !== "" && playingTrack.title && (
             <>
-            <p>Last Searched: 
+            <h4>Last Searched: 
               <p>
               {playingTrack.title} by {playingTrack.artist}
               </p>
-              </p>
+              </h4>
               <div className="selected-playlist-button-container">
-            <button onClick={() => handleAddSong(selectedPlaylist.id, playingTrack)}>Add Searched To Playlist</button>
-            <button onClick={() => handleRemoveSong(selectedPlaylist.id, playingTrack)}>Remove Searched From Playlist</button>
+           {!findMatchingItem(selectedPlaylist.id, playingTrack) && <button onClick={() => handleAddSong(selectedPlaylist.id, playingTrack)}>Add Last Searched To Playlist</button>}
+            {findMatchingItem(selectedPlaylist.id, playingTrack) && <button onClick={() => handleRemoveSong(selectedPlaylist.id, playingTrack)}>Remove Last Searched From Playlist</button>}
             </div>
             </>
             )}
         </div>
+      )}
+            {loading && (
+        <div>Loading</div>
       )}
       
       <div className="card-wrap">
@@ -221,14 +240,15 @@ export default function Dashboard({ code }) {
         ))}
       </div>
 
-      {queuedPlaylist && (
+      {queuedPlaylist && playlistsObj[queuedPlaylist.id] !== undefined && (
   <div>
-    <h5>{playlistsObj[queuedPlaylist.id].title}</h5>
-    {playlistsObj[queuedPlaylist.id].items.map((item, i) => (
+    <h5>{playlistsObj[queuedPlaylist.id]?.title}</h5>
+    {playlistsObj[queuedPlaylist.id].items.length > 0 ? playlistsObj[queuedPlaylist.id].items.map((item, i) => (
       <div key={i + 1}>
-        {i + 1}: {item.title} by {item.artist}
+        {i + 1}: {item.title} by {item.artist} <button style={{ margin: "0", padding: "5px" }} onClick={() => handleRemoveSong(queuedPlaylist.id, item)}>-</button>
+
       </div>
-    ))}
+    )) : "Add songs to playlist to see them here"}
   </div>
 )}
 
@@ -239,9 +259,7 @@ export default function Dashboard({ code }) {
           ))}
         </div>
       )}
-      {loading && !queuedPlaylist && (
-        <div>Loading Lyrics</div>
-      )}
+
       <div className="musicPlayer">
         {accessToken && (
           <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} queuedPlaylist={queuedPlaylist}/>

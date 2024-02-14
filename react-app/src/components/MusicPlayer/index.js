@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import SpotifyWebPlayer, {
   CallbackState,
   ERROR_TYPE,
@@ -36,10 +36,15 @@ export default function MusicPlayer({ accessToken, trackUri, queuedPlaylist}) {
   const [tracks, setTracks] = useState([]);
 
   useEffect(() => {
+
     if (trackUri && queuedPlaylist) {
-      const uris = playlistsObj[queuedPlaylist.id].items.map((item) => item.uri)
-      uris.unshift(trackUri)
-      setTracks(uris)
+      if(playlistsObj[queuedPlaylist.id]) {
+        const uris = playlistsObj[queuedPlaylist.id].items.map((item) => item.uri)
+        uris.unshift(trackUri)
+        setTracks(uris)
+      } else {
+        setTracks(trackUri)
+      }
       setPlay(true)
     } else if (trackUri && !queuedPlaylist) {
       setPlaying([trackUri])
@@ -50,28 +55,23 @@ export default function MusicPlayer({ accessToken, trackUri, queuedPlaylist}) {
 
   useEffect(() => {
     if (queuedPlaylist) {
+      if(playlistsObj[queuedPlaylist.id]) {
       const uris = playlistsObj[queuedPlaylist.id].items.map((item) => item.uri)
       setPlaying([])
       setTracks(uris)
-      setPlay(true)
+      setPlay(uris.length > 0 )
+      } else {
+        setPlaying([])
+        setTracks([])
+        setPlay(false)
+      }
     }
     
   }, [queuedPlaylist, playlistsObj]);
 
 
-  
-  // useEffect(() => {
-  //   setPlay(tracks.length > 0);
-  // }, [playing, tracks]);
-
   if (!accessToken) return;
 
-  // console.log(playing, 'playing!!')
-  // console.log(queuedPlaylist, 'queued!!!')
-  // if(queuedPlaylist) {
-  //   console.log(playlistsObj[queuedPlaylist.id].items, 'playlist?!!!')
-  // }
-  // console.log(tracks, 'tracks!!')
 
   return (
     <SpotifyWebPlayer
@@ -86,3 +86,5 @@ export default function MusicPlayer({ accessToken, trackUri, queuedPlaylist}) {
     />
   );
 }
+
+
