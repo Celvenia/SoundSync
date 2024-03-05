@@ -21,10 +21,13 @@ export default function UseAuth(code) {
     code: code,
   };
 
+
+
+
   // responsible for initial log in
   useEffect(() => {
   if(!sessionUser) {
-console.log({data});
+    // dispatch(loginSpotify(data))
     dispatch(loginSpotify(data))
     .then((res) => {
       if (res.data) {

@@ -3,8 +3,9 @@ import thunk from "redux-thunk";
 import session from "./session";
 import spotifyReducer from "./spotify";
 import lyricsReducer from "./lyrics";
-import spotifyPlaylistsReducer from "./spotifyPlaylists";
+// import spotifyPlaylistsReducer from "./spotifyPlaylists";
 import playlistReducer from "./playlist";
+import usersPlaylistsReducer from "./usersPlaylists"
 
 // Load state from localStorage
 // const loadState = () => {
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   lyricsReducer,
   // spotifyPlaylistsReducer,
   playlistReducer,
+  usersPlaylistsReducer
 });
 
 let enhancer;

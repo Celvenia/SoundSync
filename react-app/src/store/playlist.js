@@ -6,6 +6,7 @@ const POST_PLAYLIST = "playlist/POST_PLAYLIST";
 const DELETE_PLAYLIST = "playlist/DELETE_PLAYLIST";
 const POST_PLAYLIST_TRACK = "playlist/POST_PLAYLIST_TRACK";
 const DELETE_PLAYLIST_TRACK = "playlist/DELETE_PLAYLIST_TRACK";
+const CLEAR_PLAYLISTS = "playlist/CLEAR_PLAYLISTS"
 
 // action creators - define actions (objects with type/data)
 const getPlaylistAC = (data) => ({
@@ -42,6 +43,10 @@ const deletePlaylistTrackAC = (data) => ({
   type: DELETE_PLAYLIST_TRACK,
   data,
 });
+
+const clearPlaylistsAC = () => ({
+  type: CLEAR_PLAYLISTS
+})
 
 
 // thunk action creators - for asynchronous code, i.e., fetch calls prior to dispatching action creators
@@ -192,6 +197,10 @@ export const postPlaylistTrack =
     }
   };
 
+  export const clearPlaylists = () => async (dispatch) => {
+    dispatch(clearPlaylistsAC())
+  }
+
 // state
 const initialState = {};
 
@@ -245,6 +254,11 @@ export default function playlistReducer(state = initialState, action) {
         items: updatedItems,
       };
     return newState
+    }
+
+    case CLEAR_PLAYLISTS: {
+      const clearedState = {}
+      return clearedState
     }
     default:
       return state;

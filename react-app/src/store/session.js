@@ -13,23 +13,7 @@ const removeUser = () => ({
 
 const initialState = { user: null };
 
-// export const authenticate = () => async (dispatch) => {
-//   const response = await fetch("/api/auth/", {
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   });
-//   if (response.ok) {
-//     const data = await response.json();
-//     if (data.errors) {
-//       return;
-//     }
 
-//     dispatch(setUser(data));
-//   }
-// };
-
-// export const login = (email, password) => async (dispatch) => {
 export const login = (userInfo) => async (dispatch) => {
   try {
     const response = await fetch("/api/auth/verify_user", {
@@ -64,7 +48,6 @@ export const logout = () => async (dispatch) => {
   }
 };
 
-// export const signUp = (username, email, password) => async (dispatch) => {
 export const signUp = (userInfo) => async (dispatch) => {
   const { username, email, spotifyId } = userInfo;
 
@@ -77,7 +60,6 @@ export const signUp = (userInfo) => async (dispatch) => {
       username,
       email,
       spotifyId,
-      //   password,
     }),
   });
 

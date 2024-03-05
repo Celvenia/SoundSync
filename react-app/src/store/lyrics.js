@@ -1,6 +1,7 @@
 // lyricsReducer.js
 export const GET_LYRICS_SUCCESS = "lyrics/GET_LYRICS_SUCCESS";
 export const GET_LYRICS_FAILURE = "lyrics/GET_LYRICS_FAILURE";
+export const CLEAR_LYRICS = "lyrics/CLEAR_LYRICS"
 
 export const getLyricsSuccess = (lyrics) => ({
   type: GET_LYRICS_SUCCESS,
@@ -11,6 +12,10 @@ export const getLyricsFailure = (error) => ({
   type: GET_LYRICS_FAILURE,
   error,
 });
+
+export const clearLyricsAC = () => ({
+  type: CLEAR_LYRICS
+})
 
 export const getLyrics = (artist, song) => {
   return async (dispatch) => {
@@ -34,6 +39,10 @@ export const getLyrics = (artist, song) => {
   };
 };
 
+export const clearLyrics = () => async (dispatch) => {
+  dispatch(clearLyricsAC())
+}
+
 const initialState = {
   lyrics: null,
   error: null,
@@ -54,6 +63,12 @@ const lyricsReducer = (state = initialState, action) => {
         lyrics: "Failed to obtain lyrics, Please try again",
         error: action.error,
       };
+    case CLEAR_LYRICS: 
+    const clearedLyrics = {
+      lyrics: null,
+      error: null,
+    }
+    return clearedLyrics
     default:
       return state;
   }

@@ -53,6 +53,8 @@ export const loginSpotify = (data) => {
         body: JSON.stringify(data),
       });
 
+  
+
       if (response.ok) {
         const responseData = await response.json();
         let data = dispatch(spotifyLoginSuccess(responseData));

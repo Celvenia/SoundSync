@@ -19,6 +19,7 @@ import {
   faX,
 } from "@fortawesome/free-solid-svg-icons";
 import { deletePlaylistTracks } from "../../store/spotifyPlaylists";
+import { getUsersPlaylists } from "../../store/usersPlaylists";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
@@ -30,6 +31,7 @@ export default function Dashboard({ code }) {
   const userInfo = useSelector((state) => state.spotifyReducer);
   const lyricsObj = useSelector((state) => state.lyricsReducer);
   const playlistsObj = useSelector((state) => state.playlistReducer);
+  const usersPlaylistsObj = useSelector((state) => state.usersPlaylistsReducer);
   const playlists = Object.values(playlistsObj)
   const sessionUser = useSelector((state) => state.session.user);
   const [search, setSearch] = useState("");
@@ -175,6 +177,13 @@ export default function Dashboard({ code }) {
     return;
   }, [lyricsObj.lyrics, playingTrack]);
 
+  // useEffect(() => {
+  //   dispatch(getUsersPlaylists("Dāsha Darlene Ocenar"))
+  //   dispatch(getUsersPlaylists("soulju"))
+  // },[])
+
+
+  // console.log(usersPlaylistsObj)
 
   // RETURN 
   return sessionUser ? (
@@ -186,7 +195,8 @@ export default function Dashboard({ code }) {
           placeholder="Search Songs/Artists"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          />  
+          />
+            {/* <button style={{ marginLeft: "10px", padding: "5px", height: "20px", border: "1px solid blue" }}>Search Users</button> */}
           </div>
       
       {playlists.length > 0 && (
@@ -241,14 +251,25 @@ export default function Dashboard({ code }) {
       </div>
 
       {queuedPlaylist && playlistsObj[queuedPlaylist.id] !== undefined && (
-  <div>
-    <h5>{playlistsObj[queuedPlaylist.id]?.title}</h5>
-    {playlistsObj[queuedPlaylist.id].items.length > 0 ? playlistsObj[queuedPlaylist.id].items.map((item, i) => (
-      <div key={i + 1}>
-        {i + 1}: {item.title} by {item.artist} <button style={{ margin: "0", padding: "5px" }} onClick={() => handleRemoveSong(queuedPlaylist.id, item)}>-</button>
+  <div className="queued-playlist">
+    <h5 className="playlist-title">{playlistsObj[queuedPlaylist.id]?.title}</h5>
+    <div className="playlist-items">
+      {playlistsObj[queuedPlaylist.id].items.length > 0 ? playlistsObj[queuedPlaylist.id].items.map((item, i) => (
+        <div className="playlist-item" key={i + 1}>
+          <div className="item-index">{i + 1}</div>
+          <img src={`${item.album_url}`} className="item-index"></img>
+          <div className="item-details">
+            <div className="item-title">{item.title}</div>
+            <div className="item-artist">{item.artist}</div>
+          </div>
+          <button className="remove-button" onClick={() => handleRemoveSong(queuedPlaylist.id, item)}>
+            <i className="fas fa-minus"></i>
+          </button>
+        </div>
+      )) : <div className="empty-playlist-message">Add songs to the playlist to see them here</div>}
+    </div>
 
-      </div>
-    )) : "Add songs to playlist to see them here"}
+
   </div>
 )}
 

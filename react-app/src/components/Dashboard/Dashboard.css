@@ -46,10 +46,63 @@
   height: 40px;
 }
 
-.selected-playlist-container button:hover {
+/* .selected-playlist-container button:hover {
   background-color: #f2f2f2;
   color: #000;
+} */
+
+.queued-playlist {
+  padding: 20px;
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  margin-top: 20px;
 }
+
+.playlist-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  background-color: #777;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.playlist-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.item-index {
+  margin-right: 10px;
+}
+
+.item-details {
+  flex-grow: 1;
+}
+
+.item-title {
+  font-weight: bold;
+}
+
+.item-artist {
+  color: #777;
+}
+
+.remove-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #b9341d;
+}
+
 
 .items {
   display: flex;

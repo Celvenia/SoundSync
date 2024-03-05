@@ -15,3 +15,4 @@ class Config:
     SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
     GENIUS_CLIENT_ID = os.environ.get('GENIUS_CLIENT_ID')
     GENIUS_CLIENT_SECRET = os.environ.get('GENIUS_CLIENT_SECRET')
+

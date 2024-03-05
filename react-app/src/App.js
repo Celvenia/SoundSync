@@ -23,6 +23,7 @@ import Profile from "./components/Profile";
 import Socials from "./components/Socials";
 import { MusicProvider } from "./context/MusicContext";
 
+// const code = new URLSearchParams(window.location.search).get("code");
 const code = new URLSearchParams(window.location.search).get("code");
 
 function App() {
@@ -35,7 +36,6 @@ function App() {
 
   useEffect(() => {
     if (!accessToken) return;
-    // dispatch(login(userInfo)).then(() => setIsLoaded(true));
   }, [dispatch, accessToken]);
 
   const check = () => {

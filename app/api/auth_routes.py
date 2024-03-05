@@ -195,7 +195,7 @@ def verify_user():
 def login_spotify():
     try:
         code = request.json.get('code')
-
+        
         data = {
             "grant_type": "authorization_code",
             "code": code,
@@ -218,3 +218,36 @@ def login_spotify():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# @auth_routes.route('/login_spotify', methods=['POST'])
+# def login_spotify():
+#     try:
+#         code = request.json.get('code')
+#         is_demo = request.json.get('isDemo', False)
+
+#         if is_demo:
+#             code = os.getenv("DEMO_SPOTIFY_CODE", code)
+
+#         data = {
+#             "grant_type": "authorization_code",
+#             "code": code,
+#             "redirect_uri": REDIRECT_URI,
+#             "client_id": SPOTIPY_CLIENT_ID,
+#             "client_secret": SPOTIPY_CLIENT_SECRET,
+#         }
+
+#         response = requests.post(TOKEN_URL, data=data)
+
+#         if response.status_code == 200:
+#             token_info = response.json()
+#             return jsonify({
+#                 'accessToken': token_info['access_token'],
+#                 'refreshToken': token_info['refresh_token'],
+#                 'expiresIn': token_info['expires_in']
+#             })
+
+#         return jsonify({'error': 'Failed to get access token'}), response.status_code
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500

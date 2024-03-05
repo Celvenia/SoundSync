@@ -42,6 +42,11 @@ button {
   border-radius: 5px;
 }
 
+button:hover {
+  background-color: #f2f2f2;
+  color: #000;
+}
+
 
 .outerWrap {
   height: 100vh;
