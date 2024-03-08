@@ -6,21 +6,30 @@ from flask_login import current_user, login_user, logout_user, login_required
 import os
 import requests
 
+
+# SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
+# SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
+# REDIRECT_URI = 'http://localhost:3000'
+# TOKEN_URL = "https://accounts.spotify.com/api/token"
+# SPOTIPY_SCOPE = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-read'
+
+# sp_oauth = SpotifyOAuth(
+#     SPOTIPY_CLIENT_ID,
+#     SPOTIPY_CLIENT_SECRET,
+#     REDIRECT_URI,
+#     scope=SPOTIPY_SCOPE,
+#     cache_path='.cache'
+# )
+
+import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
-SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
-REDIRECT_URI = 'http://localhost:3000'
-TOKEN_URL = "https://accounts.spotify.com/api/token"
-SPOTIPY_SCOPE = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-read'
 
 sp_oauth = SpotifyOAuth(
-    SPOTIPY_CLIENT_ID,
-    SPOTIPY_CLIENT_SECRET,
-    REDIRECT_URI,
-    scope=SPOTIPY_SCOPE,
-    cache_path='.cache'
+    scope="playlist-modify-private playlist-modify-public playlist-read-collaborative playlist-read-private user-library-read user-read-email user-read-private",
+    redirect_uri="http://localhost:3000"
 )
+
 
 
 auth_routes = Blueprint('auth', __name__)
@@ -190,34 +199,52 @@ def verify_user():
     except Exception as e:
         return {'errors': [str(e)]}, 401
     
+@auth_routes.route('/accessToken')
+def accessToken():
+    
+    # Get the access token information
+    token_info = sp_oauth.get_access_token()
 
-@auth_routes.route('/login_spotify', methods=['POST'])
-def login_spotify():
-    try:
-        code = request.json.get('code')
+    # If the access token is expired, refresh it
+    if sp_oauth.is_token_expired(token_info):
+        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+
+    # Create a new Spotify object with the updated token information
+    api = spotipy.Spotify(auth=token_info['access_token'])
+
+    # Use the refreshed API
+    data = api.current_user()
+    return token_info
+    
+    
+
+# @auth_routes.route('/login_spotify', methods=['POST'])
+# def login_spotify():
+#     try:
+#         code = request.json.get('code')
         
-        data = {
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": REDIRECT_URI,
-            "client_id": SPOTIPY_CLIENT_ID,
-            "client_secret": SPOTIPY_CLIENT_SECRET,
-        }
+#         data = {
+#             "grant_type": "authorization_code",
+#             "code": code,
+#             "redirect_uri": REDIRECT_URI,
+#             "client_id": SPOTIPY_CLIENT_ID,
+#             "client_secret": SPOTIPY_CLIENT_SECRET,
+#         }
 
-        response = requests.post(TOKEN_URL, data=data)
+#         response = requests.post(TOKEN_URL, data=data)
 
-        if response.status_code == 200:
-            token_info = response.json()
-            return jsonify({
-                'accessToken': token_info['access_token'],
-                'refreshToken': token_info['refresh_token'],
-                'expiresIn': token_info['expires_in']
-            })
+#         if response.status_code == 200:
+#             token_info = response.json()
+#             return jsonify({
+#                 'accessToken': token_info['access_token'],
+#                 'refreshToken': token_info['refresh_token'],
+#                 'expiresIn': token_info['expires_in']
+#             })
 
-        return jsonify({'error': 'Failed to get access token'}), response.status_code
+#         return jsonify({'error': 'Failed to get access token'}), response.status_code
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
 
 
 # @auth_routes.route('/login_spotify', methods=['POST'])

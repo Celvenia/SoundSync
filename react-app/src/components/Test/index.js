@@ -6,7 +6,7 @@ import MusicPlayer from "../MusicPlayer";
 import UseAuth from "../UseAuth";
 import { getUserInfo } from "../../store/spotify";
 import Playlists from "../Playlists";
-import "./Dashboard.css";
+// import "./Dashboard.css";
 import { useMusic } from "../../context/MusicContext";
 
 import { signUp, login } from "../../store/session";
@@ -20,18 +20,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { deletePlaylistTracks } from "../../store/spotifyPlaylists";
 import { getUsersPlaylists } from "../../store/usersPlaylists";
+import { getToken, refresh } from "../../store/test";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
 });
 
-export default function Dashboard({ code }) {
-  const token = UseAuth(code);
-  const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+export default function Test() {
+  const token = UseAuth();
+  // const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+
   const userInfo = useSelector((state) => state.spotifyReducer);
+  const accessToken = useSelector((state) => state.testReducer.data);
   const lyricsObj = useSelector((state) => state.lyricsReducer);
   const playlistsObj = useSelector((state) => state.playlistReducer);
   const usersPlaylistsObj = useSelector((state) => state.usersPlaylistsReducer);
+  const testObj = useSelector((state) => state.testReducer)
   const playlists = Object.values(playlistsObj)
   const sessionUser = useSelector((state) => state.session.user);
   const [search, setSearch] = useState("");
@@ -142,8 +146,9 @@ export default function Dashboard({ code }) {
       setSearchResults([]);
       return;
     }
-  
+    
     let cancel = false;
+
 
     spotifyApi.searchTracks(search).then((res) => {
       if (cancel) return;
@@ -166,9 +171,6 @@ export default function Dashboard({ code }) {
       );
     });
 
-
-
-    
     return () => (cancel = true);
   }, [search, accessToken]);
 
@@ -179,16 +181,16 @@ export default function Dashboard({ code }) {
     return;
   }, [lyricsObj.lyrics, playingTrack]);
 
-  // useEffect(() => {
-  //   dispatch(getUsersPlaylists("Dāsha Darlene Ocenar"))
-  //   dispatch(getUsersPlaylists("soulju"))
-  // },[])
+  useEffect(() => {
+    // dispatch(getToken())
+    // if(accessToken) {
+      // dispatch(refresh())
+    // }
+  },[dispatch])
 
-
-  // console.log(usersPlaylistsObj)
 
   // RETURN 
-  return sessionUser ? (
+  return (
     <div>
 
         <div className="search-bar">
@@ -288,8 +290,11 @@ export default function Dashboard({ code }) {
           <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} queuedPlaylist={queuedPlaylist}/>
         )}
       </div>
-    </div>
-  ) : (
-    <LoginFormModal />
-  );
+
+ </div>
+//   ) : (
+//     <LoginFormModal />
+//   );
+  )
+
 }

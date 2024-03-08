@@ -20,8 +20,16 @@ login = LoginManager(app)
 login.login_view = 'auth.unauthorized'
 
 
+# then we will be using this variable in the different routes,
+# and it' connected to *YOUR* account.
+
+# let's rerun the app
+
 @login.user_loader
 def load_user(id):
+    return User.query.get(1)
+
+
     return User.query.get(int(id))
 
 

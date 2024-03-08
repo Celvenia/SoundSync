@@ -21,10 +21,12 @@ import LoginFormModal from "./components/LoginFormModal";
 import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 import Socials from "./components/Socials";
+import Test from "./components/Test"
 import { MusicProvider } from "./context/MusicContext";
 
 // const code = new URLSearchParams(window.location.search).get("code");
-const code = new URLSearchParams(window.location.search).get("code");
+// const code = new URLSearchParams(window.location.search).get("code");
+const code = "demo"
 
 function App() {
   const dispatch = useDispatch();
@@ -60,11 +62,12 @@ function App() {
                   )}
                 </Route> */}
                 <Route path="/">
-                  {check() ? (
+                  {/* {check() ? (
                     <Dashboard code={code} />
                   ) : (
                     <LoginFormModal />
-                  )}
+                  )} */}
+                  <Test />
                 </Route>
               </Switch>
               {/* )} */}

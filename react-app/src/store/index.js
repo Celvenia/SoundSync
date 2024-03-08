@@ -6,6 +6,7 @@ import lyricsReducer from "./lyrics";
 // import spotifyPlaylistsReducer from "./spotifyPlaylists";
 import playlistReducer from "./playlist";
 import usersPlaylistsReducer from "./usersPlaylists"
+import testReducer from "./test";
 
 // Load state from localStorage
 // const loadState = () => {
@@ -35,7 +36,8 @@ const rootReducer = combineReducers({
   lyricsReducer,
   // spotifyPlaylistsReducer,
   playlistReducer,
-  usersPlaylistsReducer
+  usersPlaylistsReducer,
+  testReducer,
 });
 
 let enhancer;

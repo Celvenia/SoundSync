@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  loginSpotify,
-  postCode,
+  // loginSpotify,
+  // postCode,
   refreshSpotifyToken,
 } from "../../store/spotify";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { getToken } from "../../store/test";
 
-export default function UseAuth(code) {
+export default function UseAuth() {
+
+
   const [accessToken, setAccessToken] = useState();
   const [refreshToken, setRefreshToken] = useState();
   const [expiresIn, setExpiresIn] = useState();
@@ -17,9 +20,6 @@ export default function UseAuth(code) {
   const sessionUser = useSelector((state) => state.session.user);
   const history = useHistory();
 
-  const data = {
-    code: code,
-  };
 
 
 
@@ -28,9 +28,10 @@ export default function UseAuth(code) {
   useEffect(() => {
   if(!sessionUser) {
     // dispatch(loginSpotify(data))
-    dispatch(loginSpotify(data))
+    dispatch(getToken())
     .then((res) => {
       if (res.data) {
+        console.log(res, 'useAuth line 34!!!!!!!!!!!!!!!!')
         setAccessToken(res.data.accessToken);
         setRefreshToken(res.data.refreshToken);
         setExpiresIn(res.data.expiresIn);
@@ -43,7 +44,7 @@ export default function UseAuth(code) {
   }
     
     return accessToken;
-  }, [code]);
+  }, [accessToken]);
 
   // Refresh 2 minutes before expiration and convert seconds to milliseconds
   useEffect(() => {
@@ -69,5 +70,5 @@ export default function UseAuth(code) {
     }
   }, [refreshToken, expiresIn]);
 
-  return <div>{code}</div>;
+  return <div></div>;
 }
