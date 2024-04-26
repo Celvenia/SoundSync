@@ -60,7 +60,7 @@ export default function MusicPlayer({ accessToken, trackUri, queuedPlaylist}) {
 
 
   if (!accessToken) return;
-  if (!sessionUser) return;
+  // if (!sessionUser) return;
 
 
   return (

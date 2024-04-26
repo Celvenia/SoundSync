@@ -21,7 +21,7 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
   const playlistsObj = useSelector((state) => state.playlistReducer);
   const playlists = Object.values(playlistsObj);
   const sessionUser = useSelector((state) => state.session.user);
-  const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+  const accessToken = useSelector((state) => state.tokenReducer.access_token);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -79,22 +79,22 @@ export default function SideBar({ selectedPlaylist, setSelectedPlaylist }) {
       <li className="logo">
           <img src={logo}></img>
         </li>
-        {/* <li>
+        <li>
           <NavLink exact to="/">
             <FontAwesomeIcon icon={faHome} />
           </NavLink>
           <NavLink exact to="/">
             Home
           </NavLink>
-        </li> */}
-        {/* <li>
+        </li>
+        <li>
           <NavLink exact to="/search">
             <FontAwesomeIcon icon={faMagnifyingGlass} />
           </NavLink>
           <NavLink exact to="/search">
             Search
           </NavLink>
-        </li> */}
+        </li>
       </ul>
       <ul className="sideBottom">
         <li className="library" onClick={handlePostPlaylistClick}>

@@ -20,22 +20,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { deletePlaylistTracks } from "../../store/spotifyPlaylists";
 import { getUsersPlaylists } from "../../store/usersPlaylists";
-import { getToken, refresh } from "../../store/test";
+import { getToken, refresh } from "../../store/token";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
 });
 
 export default function Test() {
-  const token = UseAuth();
-  // const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
 
   const userInfo = useSelector((state) => state.spotifyReducer);
-  const accessToken = useSelector((state) => state.testReducer.data);
+  const accessToken = useSelector((state) => state.tokenReducer.access_token);
   const lyricsObj = useSelector((state) => state.lyricsReducer);
   const playlistsObj = useSelector((state) => state.playlistReducer);
   const usersPlaylistsObj = useSelector((state) => state.usersPlaylistsReducer);
-  const testObj = useSelector((state) => state.testReducer)
   const playlists = Object.values(playlistsObj)
   const sessionUser = useSelector((state) => state.session.user);
   const [search, setSearch] = useState("");
@@ -182,7 +179,7 @@ export default function Test() {
   }, [lyricsObj.lyrics, playingTrack]);
 
   useEffect(() => {
-    // dispatch(getToken())
+    dispatch(getToken())
     // if(accessToken) {
       // dispatch(refresh())
     // }
@@ -292,9 +289,6 @@ export default function Test() {
       </div>
 
  </div>
-//   ) : (
-//     <LoginFormModal />
-//   );
   )
 
 }

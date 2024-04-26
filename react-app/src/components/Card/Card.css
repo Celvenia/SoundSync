@@ -1,5 +1,22 @@
+/* color palette
+raisin black #252323
+slate grey #70798C
+isabelline #f5f1ed
+bone #DAD2BC
+khaki #A99985
+*/
+
 .card {
   background-color: #181818;
+  background: linear-gradient(
+    135deg,
+    rgba(19, 32, 66, 0.1),
+    rgba(112, 121, 140, 0.5)
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(41, 98, 255, 0.1);
   border-radius: 10px;
   width: 150px;
   height: 225px;
@@ -33,7 +50,7 @@
 .cardContent {
   padding: 8px 12px;
   font-size: 14px;
-  color: #fff;
+  color: #f5f1ed;
 }
 
 .cardContent:nth-child(2) {
@@ -62,7 +79,6 @@
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
-  background-color: green;
   cursor: pointer;
 }
 
@@ -75,7 +91,7 @@
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
-  color: green;
+  color: #252323;
   background-color: #fff;
   cursor: pointer;
 }

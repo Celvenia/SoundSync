@@ -7,7 +7,7 @@ import {
   refreshSpotifyToken,
 } from "../../store/spotify";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { getToken } from "../../store/test";
+import { getToken } from "../../store/token";
 
 export default function UseAuth() {
 
@@ -31,16 +31,15 @@ export default function UseAuth() {
     dispatch(getToken())
     .then((res) => {
       if (res.data) {
-        console.log(res, 'useAuth line 34!!!!!!!!!!!!!!!!')
-        setAccessToken(res.data.accessToken);
-        setRefreshToken(res.data.refreshToken);
-        setExpiresIn(res.data.expiresIn);
-        history.push("/");
+        setAccessToken(res.data.access_token);
+        setRefreshToken(res.data.refresh_token);
+        setExpiresIn(res.data.expires_in);
+        // history.push("/");
       }
     })
-    .catch(() => {
-      history.push("/");
-    });
+    // .catch(() => {
+    //   history.push("/");
+    // });
   }
     
     return accessToken;
@@ -53,22 +52,22 @@ export default function UseAuth() {
       // const refreshInterval = 5000;
 
       const intervalId = setInterval(() => {
-        dispatch(refreshSpotifyToken(refreshToken))
+        dispatch(accessToken())
           .then((res) => {
             if (res.data) {
-              setAccessToken(res.data.accessToken);
-              setExpiresIn(res.data.expiresIn);
-              history.push("/");
+              setAccessToken(res.data.access_token);
+              setExpiresIn(res.data.expires_in);
+              // history.push("/");
             }
           })
-          .catch(() => {
-            history.push("/");
-          });
+          // .catch(() => {
+          //   history.push("/");
+          // });
       }, refreshInterval);
 
       return () => clearInterval(intervalId);
     }
   }, [refreshToken, expiresIn]);
 
-  return <div></div>;
+  return <div>{accessToken}</div>;
 }

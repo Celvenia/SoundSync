@@ -25,24 +25,21 @@ import Test from "./components/Test"
 import { MusicProvider } from "./context/MusicContext";
 
 // const code = new URLSearchParams(window.location.search).get("code");
-// const code = new URLSearchParams(window.location.search).get("code");
-const code = "demo"
 
 function App() {
   const dispatch = useDispatch();
-  const history = useHistory();
+  // const history = useHistory();
   const [isLoaded, setIsLoaded] = useState(false);
-  const sessionUser = useSelector((state) => state.session.user);
-  const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
-  const userInfo = useSelector((state) => state.spotifyReducer);
+  const accessToken = useSelector((state) => state.tokenReducer.access_token)
 
   useEffect(() => {
     if (!accessToken) return;
   }, [dispatch, accessToken]);
 
-  const check = () => {
-    return code || accessToken || sessionUser
-  }
+  // useEffect(() => {
+  //   dispatch(authenticate()).then(() => setIsLoaded(true));
+  // }, [dispatch]);
+
 
   return (
     <MusicProvider>
@@ -54,23 +51,11 @@ function App() {
 
             <div className="mainContent">
               <Switch>
-                {/* <Route path="/search">
-                  {check() ? (
-                    <Dashboard code={code} />
-                  ) : (
-                    <LoginFormModal />
-                  )}
-                </Route> */}
                 <Route path="/">
-                  {/* {check() ? (
-                    <Dashboard code={code} />
-                  ) : (
-                    <LoginFormModal />
-                  )} */}
-                  <Test />
+                  <Dashboard />
+                  {/* <LoginFormModal /> */}
                 </Route>
               </Switch>
-              {/* )} */}
             </div>
           </div>
         </div>

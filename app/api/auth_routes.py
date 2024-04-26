@@ -7,8 +7,8 @@ import os
 import requests
 
 
-# SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
-# SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
+SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
+SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
 # REDIRECT_URI = 'http://localhost:3000'
 # TOKEN_URL = "https://accounts.spotify.com/api/token"
 # SPOTIPY_SCOPE = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-read'
@@ -26,6 +26,8 @@ from spotipy.oauth2 import SpotifyOAuth
 
 
 sp_oauth = SpotifyOAuth(
+    SPOTIPY_CLIENT_ID,
+    SPOTIPY_CLIENT_SECRET,
     scope="playlist-modify-private playlist-modify-public playlist-read-collaborative playlist-read-private user-library-read user-read-email user-read-private",
     redirect_uri="http://localhost:3000"
 )
@@ -82,47 +84,50 @@ def logout():
     return {'message': 'User logged out'}
 
 
-# @auth_routes.route('/signup', methods=['POST'])
-# def sign_up():
-#     """
-#     Creates a new user and logs them in
-#     """
-#     form = SignUpForm()
-#     form['csrf_token'].data = request.cookies['csrf_token']
-#     if form.validate_on_submit():
-#         user = User(
-#             username=form.data['username'],
-#             email=form.data['email'],
-#             password=form.data['password']
-#         )
-#         db.session.add(user)
-#         db.session.commit()
-#         login_user(user)
-#         return user.to_dict()
-#     return {'errors': validation_errors_to_error_messages(form.errors)}, 401
-
 @auth_routes.route('/signup', methods=['POST'])
 def sign_up():
     """
     Creates a new user and logs them in
     """
-    try:
-        data = request.json()
-        # Create a new user
+    form = SignUpForm()
+    form['csrf_token'].data = request.cookies['csrf_token']
+    if form.validate_on_submit():
         user = User(
-            username=data.get('userName'),
-            email=data.get('email'),
-            spotify_id=data.get('spotifyId')
+            username=form.data['username'],
+            email=form.data['email'],
+            password=form.data['password']
         )
         db.session.add(user)
         db.session.commit()
-
-        # Log in the user
         login_user(user)
-
         return user.to_dict()
-    except Exception as e:
-        return {'errors': [str(e)]}, 401
+    return {'errors': validation_errors_to_error_messages(form.errors)}, 401
+
+
+# signup with oauth version of application
+
+# @auth_routes.route('/signup', methods=['POST'])
+# def sign_up():
+#     """
+#     Creates a new user and logs them in
+#     """
+#     try:
+#         data = request.json()
+#         # Create a new user
+#         user = User(
+#             username=data.get('userName'),
+#             email=data.get('email'),
+#             spotify_id=data.get('spotifyId')
+#         )
+#         db.session.add(user)
+#         db.session.commit()
+
+#         # Log in the user
+#         login_user(user)
+
+#         return user.to_dict()
+#     except Exception as e:
+#         return {'errors': [str(e)]}, 401
 
 
 @auth_routes.route('/unauthorized')
@@ -173,31 +178,31 @@ def refresh_token():
         return 'Failed to refresh access token', 400
 
 
-@auth_routes.route('/verify_user', methods=['POST'])
-def verify_user():
-    """
-    Verifies the user on the backend
-    """
-    try:
-        data = request.json
-        user = User.query.filter_by(spotify_id=data.get('id')).first()
+# @auth_routes.route('/verify_user', methods=['POST'])
+# def verify_user():
+#     """
+#     Verifies the user on the backend
+#     """
+#     try:
+#         data = request.json
+#         user = User.query.filter_by(spotify_id=data.get('id')).first()
 
-        if user:
-            login_user(user)
-            return user.to_dict()
-        else:
-            new_user = User(
-                username=data.get('display_name'),
-                email=data.get('email'),
-                spotify_id=data.get('id')
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user)
-            return new_user.to_dict()
+#         if user:
+#             login_user(user)
+#             return user.to_dict()
+#         else:
+#             new_user = User(
+#                 username=data.get('display_name'),
+#                 email=data.get('email'),
+#                 spotify_id=data.get('id')
+#             )
+#             db.session.add(new_user)
+#             db.session.commit()
+#             login_user(new_user)
+#             return new_user.to_dict()
 
-    except Exception as e:
-        return {'errors': [str(e)]}, 401
+#     except Exception as e:
+#         return {'errors': [str(e)]}, 401
     
 @auth_routes.route('/accessToken')
 def accessToken():
@@ -211,6 +216,7 @@ def accessToken():
 
     # Create a new Spotify object with the updated token information
     api = spotipy.Spotify(auth=token_info['access_token'])
+    
 
     # Use the refreshed API
     data = api.current_user()

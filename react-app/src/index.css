@@ -1,3 +1,23 @@
+/* color palette
+raisin black #252323
+slate grey #70798C
+isabelline #f5f1ed
+bone #DAD2BC
+khaki #A99985
+background: linear-gradient(
+    135deg,
+    rgba(19, 32, 66, 0.1),
+    rgba(112, 121, 140, 0.5)
+  );
+
+  #AOD2EB
+  #ESEAFS
+  #D0BDF4
+  #845BB3
+  #494DSF
+*/
+
+
 body {
   margin: 0;
   box-sizing: border-box;

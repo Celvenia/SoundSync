@@ -17,18 +17,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
   faX,
+  faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import { deletePlaylistTracks } from "../../store/spotifyPlaylists";
 import { getUsersPlaylists } from "../../store/usersPlaylists";
+import { getToken, refresh } from "../../store/token";
+import OpenModalButton from "../OpenModalButton";
+import Lyrics from "../Lyrics";
+import Loading from "../Loading";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "442c0305787a40a8a9c36fc4270e17c7",
 });
 
-export default function Dashboard({ code }) {
-  const token = UseAuth(code);
-  const accessToken = useSelector((state) => state.spotifyReducer.accessToken);
+export default function Dashboard() {
+
   const userInfo = useSelector((state) => state.spotifyReducer);
+  const accessToken = useSelector((state) => state.tokenReducer.access_token);
+  const {refresh_token, expires_in} = useSelector((state) => state.tokenReducer);
   const lyricsObj = useSelector((state) => state.lyricsReducer);
   const playlistsObj = useSelector((state) => state.playlistReducer);
   const usersPlaylistsObj = useSelector((state) => state.usersPlaylistsReducer);
@@ -129,21 +135,17 @@ export default function Dashboard({ code }) {
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
-    dispatch(getUserInfo(accessToken));
-    if (userInfo.email) {
-      dispatch(login(userInfo));
-      dispatch(getPlaylists())
-    }
     
-  }, [accessToken, userInfo.email, dispatch]);
+  }, [accessToken, dispatch]);
 
   useEffect(() => {
     if (!search.trim() || !accessToken) {
       setSearchResults([]);
       return;
     }
-  
+    
     let cancel = false;
+
 
     spotifyApi.searchTracks(search).then((res) => {
       if (cancel) return;
@@ -166,9 +168,6 @@ export default function Dashboard({ code }) {
       );
     });
 
-
-
-    
     return () => (cancel = true);
   }, [search, accessToken]);
 
@@ -179,16 +178,29 @@ export default function Dashboard({ code }) {
     return;
   }, [lyricsObj.lyrics, playingTrack]);
 
-  // useEffect(() => {
-  //   dispatch(getUsersPlaylists("Dāsha Darlene Ocenar"))
-  //   dispatch(getUsersPlaylists("soulju"))
-  // },[])
+  useEffect(() => {
+    dispatch(getToken())
+    // if(accessToken) {
+      // dispatch(refresh())
+    // }
+  },[dispatch])
 
+  useEffect(() => {
+    if (refresh_token && expires_in) {
+      const refreshInterval = (expires_in - 120) * 1000;
 
-  // console.log(usersPlaylistsObj)
+      const intervalId = setInterval(() => {
+        dispatch(getToken())
+         console.log('ATTEMPTING REFRESH')
+      }, refreshInterval);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [accessToken, refresh_token, expires_in]);
+
 
   // RETURN 
-  return sessionUser ? (
+  return (
     <div>
 
         <div className="search-bar">
@@ -198,8 +210,11 @@ export default function Dashboard({ code }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           />
-            {/* <button style={{ marginLeft: "10px", padding: "5px", height: "20px", border: "1px solid blue" }}>Search Users</button> */}
+          <FontAwesomeIcon 
+                  icon={faSearch}
+                  />
           </div>
+            {/* <button >Search Users</button> */}
       
       {playlists.length > 0 && (
         <select onChange={handlePlaylistSelect}>
@@ -243,7 +258,7 @@ export default function Dashboard({ code }) {
         </div>
       )}
             {loading && (
-        <div>Loading</div>
+        <Loading />
       )}
       
       <div className="card-wrap">
@@ -264,7 +279,15 @@ export default function Dashboard({ code }) {
             <div className="item-title">{item.title}</div>
             <div className="item-artist">{item.artist}</div>
           </div>
-          <button className="remove-button" onClick={() => handleRemoveSong(queuedPlaylist.id, item)}>
+          <OpenModalButton
+                      buttonText={"Get Lyrics"}
+                      modalComponent={
+                        <Lyrics
+                          artist={item.artist} title={item.title}
+                        />
+                      }
+                    />
+          <button className="remove-button" title="Remove Song From Playlist" onClick={() => handleRemoveSong(queuedPlaylist.id, item)}>
             <i className="fas fa-minus"></i>
           </button>
         </div>
@@ -277,9 +300,14 @@ export default function Dashboard({ code }) {
 
       {lyrics && searchResults.length <= 0 && !loading && !queuedPlaylist && (
         <div>
-          {lyrics.split(/(\[.*?\])/).map((section, index) => (
-            section.trim() && <div key={index}>{section}</div>
-          ))}
+           <OpenModalButton
+                      buttonText={"Get Lyrics"}
+                      modalComponent={
+                        <Lyrics
+                          artist={playingTrack.artist} title={playingTrack.title}
+                        />
+                      }
+                    />
         </div>
       )}
 
@@ -288,8 +316,8 @@ export default function Dashboard({ code }) {
           <MusicPlayer accessToken={accessToken} trackUri={playingTrack?.uri} queuedPlaylist={queuedPlaylist}/>
         )}
       </div>
-    </div>
-  ) : (
-    <LoginFormModal />
-  );
+
+ </div>
+  )
+
 }

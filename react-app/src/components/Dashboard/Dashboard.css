@@ -1,9 +1,22 @@
+/* color palette
+raisin black #252323
+slate grey #70798C
+isabelline #f5f1ed
+bone #DAD2BC
+khaki #A99985
+background: linear-gradient(
+    135deg,
+    rgba(19, 32, 66, 0.1),
+    rgba(112, 121, 140, 0.5)
+  );
+*/
+
 .search-bar {
   display: flex;
   align-items: center;
-  background-color: #f2f2f2;
   padding: 8px;
-  border-radius: 4px;
+  background-color:  #f5f1ed;
+  border-radius: 5px;
   width: 300px;
 }
 
@@ -13,6 +26,15 @@
   outline: none;
   background: transparent;
   font-size: 16px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  color: #333;
+  padding: 5px;
+}
+
+
+.svg-inline--fa.fa-magnifying-glass {
+  color: #70798C;
 }
 
 .search-bar button {
@@ -46,10 +68,6 @@
   height: 40px;
 }
 
-/* .selected-playlist-container button:hover {
-  background-color: #f2f2f2;
-  color: #000;
-} */
 
 .queued-playlist {
   padding: 20px;
@@ -103,11 +121,12 @@
   color: #b9341d;
 }
 
-
 .items {
   display: flex;
   flex-direction: column;
 }
+
+
 
 input[type="text"]::-webkit-input-placeholder {
   color: #888;

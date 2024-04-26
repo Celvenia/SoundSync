@@ -21,8 +21,8 @@ function Navigation({ isLoaded }) {
           <ProfileButton user={sessionUser} />
         </li>
       )} */}
-                  <Socials />
-            <Profile />
+                  {/* <Socials /> */}
+            {/* <Profile /> */}
     </ul>
   );
 }
