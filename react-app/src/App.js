@@ -18,6 +18,7 @@ import SideBar from "./components/SideBar";
 import Card from "./components/Card";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import LoginFormModal from "./components/LoginFormModal";
+import SignupFormModal from "./components/SignupFormModal";
 import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 import Socials from "./components/Socials";
@@ -31,14 +32,15 @@ function App() {
   // const history = useHistory();
   const [isLoaded, setIsLoaded] = useState(false);
   const accessToken = useSelector((state) => state.tokenReducer.access_token)
+  const sessionUser = useSelector((state) => state.session.user)
 
   useEffect(() => {
     if (!accessToken) return;
   }, [dispatch, accessToken]);
 
-  // useEffect(() => {
-  //   dispatch(authenticate()).then(() => setIsLoaded(true));
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(authenticate()).then(() => setIsLoaded(true));
+  }, [dispatch]);
 
 
   return (
@@ -53,7 +55,8 @@ function App() {
               <Switch>
                 <Route path="/">
                   <Dashboard />
-                  {/* <LoginFormModal /> */}
+                  {/* <SignupFormModal/> */}
+                  <LoginFormPage/>
                 </Route>
               </Switch>
             </div>
